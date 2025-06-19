@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Login & Sign Up</title>
+  <script src="https://kit.fontawesome.com/f5623676d7.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/FinalProj/CSS/login.css">
+</head>
+
+<body>
+  <div id="logo"><img src="/FinalProj/Assets/Logo.jpg" alt="Logo"></div>
+  <div class="forms">
+    <h2 id="form-title">Login</h2>
+
+    <div id="login-form">
+      <input type="text" id="login-email" placeholder="Email" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      <button onclick="login()">Login</button>
+    </div>
+
+    <div id="signup-form" style="display: none;">
+      <input type="text" id="signup-email" placeholder="Email" required>
+      <input type="password" id="signup-password" placeholder="Password" required>
+      <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+      <input type="text" id="signup-name" placeholder="Full Name" required>
+      <input type="text" id="signup-address" placeholder="Address" required>
+      <input type="text" id="signup-phone" placeholder="Phone Number" required>
+      <button onclick="signup()">Sign Up</button>
+    </div>
+
+    <div class="toggle-link" onclick="toggleForm()">Don't have an account? Sign up</div>
+    <p id="message"></p>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Copyright: Kurt Adrian Luzoraga <br>Email: <a
+        href="mailto:kurtluzoraga24@gmail.com">kurtluzoraga24@gmail.com</a> or Phone: 09772384645</p>
+    <p>
+      <a href="https://www.linkedin.com/in/kurt-adrian-luzoraga-b4a480299/"><i class="fa-brands fa-linkedin"></i></a>
+      <a href="https://github.com/kaLuzoraga"><i class="fa-brands fa-github"></i></a>
+      <a href="https://www.facebook.com/profile.php?id=100014064978860"><i class="fa-brands fa-facebook"></i></a>
+    </p>
+  </footer>
+
+  <script src="/FinalProj/JS/login.js"></script>
+
+</body>
+
+</html>
