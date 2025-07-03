@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Page - ARF Vet Shop</title>
+  <link rel="stylesheet" href="/server/css/item.css">
+  <script src="https://kit.fontawesome.com/f5623676d7.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="logo"><i class="fa-solid fa-paw"></i> ARF Vet Shop</div>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/shop">Products</a></li>
+          <li><a href="/profile">Profile</a></li>
+          <li><a href="/cart"><i class="fas fa-shopping-cart"></i></a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="product-container">
+      <div class="product-image">
+        <img src="/server/assets/vitamin1.jpg" alt="Product Image">
+      </div>
+      <div class="product-details">
+        <h2>Pet Vitamin A</h2>
+        <p>Premium daily vitamin supplement for dogs and cats to support immune system and vitality.</p>
+        <div class="quantity-selector">
+          <button onclick="changeQuantity(-1)">-</button>
+          <input type="number" id="quantity" value="1" min="1">
+          <button onclick="changeQuantity(1)">+</button>
+        </div>
+        <button class="add-to-cart" onclick="addToCart()">
+          <i class="fas fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 ARF Vet Shop. All rights reserved.<br>Email: <a href="mailto:kurtluzoraga24@gmail.com">kurtluzoraga24@gmail.com</a> | Phone: 09772384645</p>
+    <p>
+      <a href="https://www.linkedin.com/in/kurt-adrian-luzoraga-b4a480299/"><i class="fa-brands fa-linkedin"></i></a>
+      <a href="https://github.com/kaLuzoraga"><i class="fa-brands fa-github"></i></a>
+      <a href="https://www.facebook.com/profile.php?id=100014064978860"><i class="fa-brands fa-facebook"></i></a>
+    </p>
+  </footer>
+
+  <script src="/server/js/item.js"></script>
+</body>
+
+</html>
