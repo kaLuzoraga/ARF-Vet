@@ -1,93 +1,113 @@
-/* * {
-    outline: 1px solid red;
-} */
-
-* {
-    box-sizing: border-box;
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background: #f2f2f2;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
-    background-image: url('/FinalProj/Assets/LoginBG.jpg');
-    background-repeat: no-repeat;
+    background-image: url('/server/assets/LoginBG.jpg');
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
     background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
 }
 
 #logo {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
+    margin-top: 40px;
 }
 
 #logo img {
     width: 100px;
-    height: auto;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
-.forms {
-    background: white;
-    padding: 30px;
+.form-wrapper {
+    background-color: white;
+    padding: 30px 24px;
     border-radius: 10px;
-    width: 350px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: auto;
+    width: 100%;
+    max-width: 360px;
+    margin: 30px auto;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 h2 {
     text-align: center;
+    color: #273044;
+    margin-bottom: 20px;
+}
+
+form {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+}
+
+form.active {
+    display: flex;
 }
 
 input {
-    width: 100%;
     padding: 10px;
-    margin: 10px 0;
     border-radius: 5px;
     border: 1px solid #ccc;
+    font-size: 0.9em;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.error-msg {
+    font-size: 0.75em;
+    color: red;
+    margin-top: -8px;
+    margin-bottom: 8px;
 }
 
 button {
-    width: 100%;
     padding: 10px;
-    background-color: #28a745;
+    background-color: #93e9be;
     border: none;
-    color: white;
+    color: #273044;
     font-weight: bold;
     border-radius: 5px;
     cursor: pointer;
+    width: 100%;
 }
 
 button:hover {
-    background-color: #218838;
+    background-color: #6cd8a8;
 }
 
 .toggle-link {
     text-align: center;
-    margin-top: 10px;
-    color: blue;
+    color: #007bff;
+    font-size: 0.85em;
     cursor: pointer;
+    margin-top: 10px;
+}
+
+.toggle-link:hover {
+    text-decoration: underline;
 }
 
 #message {
     text-align: center;
-    color: red;
-    margin-top: 10px;
+    font-size: 0.85em;
+    margin-top: 5px;
 }
 
 footer {
     padding: 25px;
-    background-color: lightgray;
+    background-color: #e0e0e0;
     text-align: center;
-    font-size: 0.7em;
+    font-size: 0.9em;
     color: #273044;
     margin-top: auto;
+    width: 100%;
 }
 
 footer a {
@@ -95,27 +115,24 @@ footer a {
     text-decoration: none;
 }
 
-#logo img {
-    width: 100px;
-    height: auto;
-    margin: 20px auto;
-    display: block;
-  }
+footer a:hover {
+    text-decoration: underline;
+}
 
 @media (max-width: 768px) {
-    .forms {
-      padding: 20px;
-      width: 90%;
+    .form-wrapper {
+        padding: 20px;
+        max-width: 90%;
     }
-  }
+}
 
-  @media (max-width: 480px) {
-    .forms {
-      padding: 15px;
-      width: 100%;
+@media (max-width: 480px) {
+    .form-wrapper {
+        padding: 15px;
+        max-width: 95%;
     }
 
     #logo img {
-      width: 80px;
+        width: 80px;
     }
-  }
+}

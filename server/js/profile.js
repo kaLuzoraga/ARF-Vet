@@ -11,7 +11,6 @@ editBtn.addEventListener("click", () => {
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
-
   let valid = true;
   inputs.forEach(input => {
     if (!input.value.trim()) {

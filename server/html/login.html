@@ -3,48 +3,59 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Login & Sign Up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Sign Up - ARF Vet</title>
+  <link rel="stylesheet" href="/server/css/login.css">
   <script src="https://kit.fontawesome.com/f5623676d7.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="/server/CSS/login.css">
 </head>
 
 <body>
-  <div id="logo"><img src="/server/Assets/Logo.jpg" alt="Logo"></div>
-  <div class="forms">
+  <div id="logo">
+    <img src="/server/assets/Logo.jpg" alt="ARF Logo">
+  </div>
+
+  <div class="form-wrapper">
     <h2 id="form-title">Login</h2>
 
-    <div id="login-form">
+    <form id="login-form" class="active">
       <input type="text" id="login-email" placeholder="Email" required>
       <input type="password" id="login-password" placeholder="Password" required>
-      <button onclick="login()">Login</button>
-    </div>
+      <button type="button" onclick="login()">Login</button>
+    </form>
 
-    <div id="signup-form" style="display: none;">
+    <form id="signup-form" onsubmit="signup(event)">
       <input type="text" id="signup-email" placeholder="Email" required>
+      <div class="error-msg" id="error-email"></div>
       <input type="password" id="signup-password" placeholder="Password" required>
+      <div class="error-msg" id="error-password"></div>
       <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+      <div class="error-msg" id="error-confirm"></div>
       <input type="text" id="signup-name" placeholder="Full Name" required>
+      <div class="error-msg" id="error-name"></div>
       <input type="text" id="signup-address" placeholder="Address" required>
+      <div class="error-msg" id="error-address"></div>
       <input type="text" id="signup-phone" placeholder="Phone Number" required>
-      <button onclick="signup()">Sign Up</button>
-    </div>
+      <div class="error-msg" id="error-phone"></div>
+      <button type="submit">Sign Up</button>
+    </form>
 
     <div class="toggle-link" onclick="toggleForm()">Don't have an account? Sign up</div>
     <p id="message"></p>
   </div>
 
   <footer>
-    <p>&copy; 2025 Copyright: Kurt Adrian Luzoraga <br>Email: <a
-        href="mailto:kurtluzoraga24@gmail.com">kurtluzoraga24@gmail.com</a> or Phone: 09772384645</p>
+    <p>&copy; 2025 Kurt Adrian Luzoraga<br>Email: <a href="mailto:kurtluzoraga24@gmail.com">kurtluzoraga24@gmail.com</a>
+      | Phone: 09772384645</p>
     <p>
-      <a href="https://www.linkedin.com/in/kurt-adrian-luzoraga-b4a480299/"><i class="fa-brands fa-linkedin"></i></a>
-      <a href="https://github.com/kaLuzoraga"><i class="fa-brands fa-github"></i></a>
-      <a href="https://www.facebook.com/profile.php?id=100014064978860"><i class="fa-brands fa-facebook"></i></a>
+      <a href="https://www.linkedin.com/in/kurt-adrian-luzoraga-b4a480299/" target="_blank"><i
+          class="fa-brands fa-linkedin"></i></a>
+      <a href="https://github.com/kaLuzoraga" target="_blank"><i class="fa-brands fa-github"></i></a>
+      <a href="https://www.facebook.com/profile.php?id=100014064978860" target="_blank"><i
+          class="fa-brands fa-facebook"></i></a>
     </p>
   </footer>
 
-  <script src="/server/JS/login.js"></script>
-
+  <script src="/server/js/login.js"></script>
 </body>
 
 </html>
