@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('partials/head') %>
+  <link rel="stylesheet" href="/server/css/users/orderinfo.css">
+</head>
+
+<body>
+  <%- include('partials/navbar') %>
+
+  <main class="checkout-container">
+    <h1>Review Your Order & Checkout</h1>
+
+    <section class="order-summary">
+      <h2>Order Summary</h2>
+
+      <% let total = 0; %>
+      <% cartItems.forEach(item => { %>
+        <% const itemTotal = item.price * item.quantity; total += itemTotal; %>
+        <div class="order-item">
+          <p>
+            <strong><%= item.name %></strong> - ₱<%= item.price.toFixed(2) %> × <%= item.quantity %> = ₱<%= itemTotal.toFixed(2) %>
+          </p>
+        </div>
+      <% }); %>
+
+      <div class="order-total">
+        <h3>Total: ₱<%= total.toFixed(2) %></h3>
+      </div>
+    </section>
+
+    <section class="checkout-form-section">
+      <h2>Shipping & Payment Details</h2>
+      <form class="checkout-form" method="POST" action="/checkout">
+        <label>Full Name</label>
+        <input type="text" name="fullName" required>
+
+        <label>Email Address</label>
+        <input type="email" name="email" required>
+
+        <label>Phone Number</label>
+        <input type="text" name="phone" required>
+
+        <label>Delivery Address</label>
+        <textarea name="address" rows="4" required></textarea>
+
+        <label>Payment Method</label>
+        <select name="paymentMethod" required>
+          <option>Cash on Delivery</option>
+          <option>GCash</option>
+          <option>Bank Transfer</option>
+        </select>
+
+        <button type="submit">Place Order</button>
+      </form>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+
+</html>

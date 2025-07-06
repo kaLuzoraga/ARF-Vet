@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - ARF Veterinary Clinic</title>
+  <link rel="stylesheet" href="/server/css/users/orderinfo.css">
+  <script src="https://kit.fontawesome.com/f5623676d7.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">ARF Veterinary Clinic</div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Products</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </nav>
+        <div class="icons">
+            <a href="#"><i class="fas fa-user"></i></a>
+            <a href="#"><i class="fas fa-shopping-cart"></i></a>
+        </div>
+    </header>
+
+  <main class="checkout-container">
+    <h1>Review Your Order & Checkout</h1>
+
+    <section class="order-summary">
+      <h2>Order Summary</h2>
+      <div class="order-item">
+        <p><strong>Pet Vitamin A</strong> - ₱350.00 × 2 = ₱700.00</p>
+      </div>
+      <div class="order-item">
+        <p><strong>Joint Support Supplement</strong> - ₱499.00 × 1 = ₱499.00</p>
+      </div>
+      <div class="order-total">
+        <h3>Total: ₱1,199.00</h3>
+      </div>
+    </section>
+
+    <section class="checkout-form-section">
+      <h2>Shipping & Payment Details</h2>
+      <form class="checkout-form">
+        <label>Full Name</label>
+        <input type="text" required>
+
+        <label>Email Address</label>
+        <input type="email" required>
+
+        <label>Phone Number</label>
+        <input type="text" required>
+
+        <label>Delivery Address</label>
+        <textarea rows="4" required></textarea>
+
+        <label>Payment Method</label>
+        <select>
+          <option>Cash on Delivery</option>
+          <option>GCash</option>
+          <option>Bank Transfer</option>
+        </select>
+
+        <button type="submit">Place Order</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Kurt Adrian Luzoraga — <a href="mailto:kurtluzoraga24@gmail.com">kurtluzoraga24@gmail.com</a></p>
+  </footer>
+</body>
+</html>
