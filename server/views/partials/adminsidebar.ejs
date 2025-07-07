@@ -1,0 +1,39 @@
+<style>
+.sidebar {
+  width: 220px;
+  background-color: #273044;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  font-size: 22px;
+  margin-bottom: 30px;
+}
+
+.sidebar nav a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+  background-color: #3b4c68;
+}
+   </style>
+   
+    <aside class="sidebar">
+      <h2>ARF Vet Shop</h2>
+      <nav>
+        <a href="inventory.html"><i class="fas fa-box"></i> Inventory</a>
+        <a href="orders.html" class="active"><i class="fas fa-receipt"></i> Orders</a>
+        <a href="users.html"><i class="fas fa-users"></i> Users</a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+      </nav>
+    </aside>

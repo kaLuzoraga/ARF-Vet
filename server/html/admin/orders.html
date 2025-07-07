@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders - ARF Vet Shop</title>
+  <link rel="stylesheet" href="/server/css/admin/orders.css">
+  <script src="https://kit.fontawesome.com/f5623676d7.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="admin-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>ARF Vet Shop</h2>
+      <nav>
+        <a href="inventory.html"><i class="fas fa-box"></i> Inventory</a>
+        <a href="orders.html" class="active"><i class="fas fa-receipt"></i> Orders</a>
+        <a href="users.html"><i class="fas fa-users"></i> Users</a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main-area">
+      <main class="main-content">
+        <div class="header">
+          <h1>Orders Management</h1>
+        </div>
+
+        <!-- Current Orders -->
+        <section class="category">
+          <h2>Current Orders</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="current-orders-body"></tbody>
+          </table>
+        </section>
+
+        <!-- Order Status -->
+        <section class="category">
+          <h2>Order Status Management</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="status-orders-body"></tbody>
+          </table>
+        </section>
+
+        <!-- Order History -->
+        <section class="category">
+          <h2>Order History</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="history-orders-body"></tbody>
+          </table>
+        </section>
+      </main>
+
+      <footer>
+        &copy; 2025 ARF Vet Shop Admin Panel. All rights reserved.
+      </footer>
+    </div>
+  </div>
+
+  <script src="/server/js/admin/orders.js"></script>
+</body>
+
+</html>
