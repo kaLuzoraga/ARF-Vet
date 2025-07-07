@@ -1,14 +1,19 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
- 
+import connect from "./database/mongodb-connect.js";
+
+const port = process.env.PORT || 3000;
 const app = express();
- 
-// define the port
-const port = 3000;
- 
+
 app.get("/", (req, res) => {
   res.send("Hello Todo App!!!");
 });
- 
+
+// Connect DB
+connect();
+
 app.listen(port, () => {
-  console.log('Listening to port ${port}');
+  console.log(`Listening to port ${port}`);
 });
