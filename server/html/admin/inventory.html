@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inventory - ARF Vet Shop</title>
+  <link rel="stylesheet" href="/server/css/admin/inventory.css" />
+  <script src="https://kit.fontawesome.com/f5623676d7.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <h2>ARF Vet Shop</h2>
+    <nav>
+      <a href="inventory.html" class="active"><i class="fas fa-box"></i> Inventory</a>
+      <a href="orders.html"><i class="fas fa-receipt"></i> Orders</a>
+      <a href="users.html"><i class="fas fa-users"></i> Users</a>
+      <a href="#"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+    </nav>
+  </aside>
+
+  <div class="page-wrapper"> 
+
+    <main class="main-content">
+      <div class="header">
+        <h1>Inventory</h1>
+        <button class="btn-add" onclick="addItem()">+ Add New Product</button>
+      </div>
+
+      <div class="category">
+        <h2>Available Items</h2>
+        <div class="items-wrapper" id="inventory-list"></div>
+      </div>
+    </main>
+
+    <footer>
+      &copy; 2025 ARF Vet Shop Admin Panel. All rights reserved.
+    </footer>
+
+  </div>
+
+  <!-- Modal Form -->
+  <div id="item-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="modal-title">Add New Product</h2>
+      <form id="item-form" enctype="multipart/form-data">
+        <input type="hidden" id="item-id" name="id" />
+
+        <label for="product-name">Product Name</label>
+        <input type="text" id="product-name" name="name" required />
+
+        <label for="product-description">Description</label>
+        <textarea id="product-description" name="description" required></textarea>
+
+        <label for="product-price">Price (₱)</label>
+        <input type="number" id="product-price" name="price" required min="0" />
+
+        <label for="product-image">Image</label>
+        <input type="file" id="product-image" name="image" accept="image/*" />
+
+        <button type="submit" class="btn-save">Save</button>
+        <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/server/js/admin/inventory.js"></script>
+</body>
+
+</html>

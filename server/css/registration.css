@@ -56,6 +56,13 @@ input {
   box-sizing: border-box;
 }
 
+.error-msg {
+  font-size: 0.75em;
+  color: red;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}
+
 button {
   padding: 10px;
   background-color: #93e9be;
@@ -85,12 +92,6 @@ button:hover {
 
 .toggle-link a:hover {
   text-decoration: underline;
-}
-
-#message {
-  text-align: center;
-  font-size: 0.85em;
-  margin-top: 5px;
 }
 
 footer {
