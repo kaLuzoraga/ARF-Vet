@@ -22,7 +22,18 @@ document.getElementById("login-form").addEventListener("submit", async function 
     if (response.ok) {
       message.style.color = "green";
       message.textContent = "Login successful!";
-      setTimeout(() => window.location.href = "/", 1000); // or redirect to dashboard
+
+      setTimeout(() => {
+        const userType = result.user?.userType;
+
+        if (userType === "user") {
+          window.location.href = "/home"; 
+        } else if (userType === "admin") {
+          window.location.href = "/admin/dashboard"; 
+        } else {
+          window.location.href = "/";
+        }
+      }, 1000);
     } else {
       message.style.color = "red";
       message.textContent = result.message || "Login failed.";
