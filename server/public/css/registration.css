@@ -1,0 +1,132 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  background-image: url('/assets/LoginBG.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#logo {
+  margin-top: 40px;
+}
+
+#logo img {
+  width: 100px;
+  border-radius: 10px;
+}
+
+.form-wrapper {
+  background-color: white;
+  padding: 30px 24px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 360px;
+  margin: 30px auto;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+  text-align: center;
+  color: #273044;
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 0.9em;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.error-msg {
+  font-size: 0.75em;
+  color: red;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}
+
+button {
+  padding: 10px;
+  background-color: #93e9be;
+  border: none;
+  color: #273044;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  background-color: #6cd8a8;
+}
+
+.toggle-link {
+  text-align: center;
+  color: #007bff;
+  font-size: 0.85em;
+  margin-top: 10px;
+}
+
+.toggle-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.toggle-link a:hover {
+  text-decoration: underline;
+}
+
+footer {
+  padding: 25px;
+  background-color: #e0e0e0;
+  text-align: center;
+  font-size: 0.9em;
+  color: #273044;
+  margin-top: auto;
+  width: 100%;
+}
+
+footer a {
+  color: #273044;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .form-wrapper {
+    padding: 20px;
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-wrapper {
+    padding: 15px;
+    max-width: 95%;
+  }
+
+  #logo img {
+    width: 80px;
+  }
+}

@@ -5,7 +5,7 @@ html {
 body {
     font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
-    background-image: url('/server/assets/LoginBG.jpg');
+    background-image: url('assets/LoginBG.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
