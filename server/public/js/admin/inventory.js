@@ -1,11 +1,6 @@
-let inventory = [];
-let editingIndex = null;
-
 function addItem() {
   document.getElementById('modal-title').textContent = 'Add New Product';
   document.getElementById('item-form').reset();
-  document.getElementById('item-id').value = '';
-  editingIndex = null;
   openModal();
 }
 
@@ -17,71 +12,67 @@ function closeModal() {
   document.getElementById('item-modal').classList.add('hidden');
 }
 
-document.getElementById('item-form').addEventListener('submit', function (e) {
+document.getElementById('item-form').addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  const name = document.getElementById('product-name').value;
-  const description = document.getElementById('product-description').value;
-  const price = parseFloat(document.getElementById('product-price').value).toFixed(2);
+  const name = document.getElementById('product-name').value.trim();
+  const description = document.getElementById('product-description').value.trim();
+  const price = parseFloat(document.getElementById('product-price').value);
 
-  const fileInput = document.getElementById('product-image');
-  const image = fileInput.files[0]
-    ? URL.createObjectURL(fileInput.files[0])
-    : (inventory[editingIndex]?.image || '');
+  const imageFile = document.getElementById('product-image').files[0];
+  if (!imageFile) return alert("Please select an image.");
 
-  const newItem = { name, description, price, image };
+  const reader = new FileReader();
+  reader.onload = async function () {
+    const base64Image = reader.result;
 
-  if (editingIndex !== null) {
-    inventory[editingIndex] = newItem;
-  } else {
-    inventory.push(newItem);
-  }
+    try {
+      const res = await fetch("/admin/products/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name, description, price, image: base64Image })
+      });
 
-  renderInventory();
-  closeModal();
+      const data = await res.json();
+      if (res.ok) {
+        alert("Product added!");
+        closeModal();
+        loadInventory();
+      } else {
+        alert("Failed to add product: " + data.message);
+      }
+    } catch (err) {
+      console.error("Error submitting product:", err);
+    }
+  };
+
+  reader.readAsDataURL(imageFile);
 });
 
-function renderInventory() {
-  const wrapper = document.getElementById('inventory-list');
-  wrapper.innerHTML = '';
-  inventory.forEach((item, index) => {
-    const card = document.createElement('div');
-    card.className = 'item-card';
+async function loadInventory() {
+  try {
+    const res = await fetch("/admin/products/all");
+    const products = await res.json();
 
-    card.innerHTML = `
-      <img src="${item.image}" alt="${item.name}" />
-      <h3>${item.name}</h3>
-      <p>${item.description}</p>
-      <div class="price">₱${item.price}</div>
-      <button class="btn-remove" onclick="deleteItem(${index})">Delete</button>
-    `;
+    const wrapper = document.getElementById("inventory-list");
+    wrapper.innerHTML = "";
 
-    card.addEventListener('click', (e) => {
-      if (!e.target.classList.contains('btn-remove')) {
-        editItem(index);
-      }
+    products.forEach((item) => {
+      const card = document.createElement("div");
+      card.className = "item-card";
+      card.innerHTML = `
+        <img src="${item.image}" alt="${item.name}" />
+        <h3>${item.name}</h3>
+        <p>${item.description}</p>
+        <div class="price">₱${item.price.toFixed(2)}</div>
+      `;
+      wrapper.appendChild(card);
     });
-
-    wrapper.appendChild(card);
-  });
-}
-
-function editItem(index) {
-  const item = inventory[index];
-  editingIndex = index;
-  document.getElementById('modal-title').textContent = 'Edit Product';
-  document.getElementById('product-name').value = item.name;
-  document.getElementById('product-description').value = item.description;
-  document.getElementById('product-price').value = item.price;
-  document.getElementById('product-image').value = '';
-  openModal();
-}
-
-function deleteItem(index) {
-  if (confirm('Are you sure you want to delete this item?')) {
-    inventory.splice(index, 1);
-    renderInventory();
+  } catch (err) {
+    console.error("Error loading inventory:", err);
   }
 }
 
-renderInventory();
+loadInventory();
