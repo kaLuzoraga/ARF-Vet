@@ -8,6 +8,7 @@ import authRouter from "./routes/users/users.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import Product from "./models/products.js";
+import adminProductRoutes from "./routes/admin/products.js";
 
 // For __dirname in ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -37,6 +38,8 @@ app.set("views", path.join(__dirname, "views"));
 
 // Auth Route
 app.use("/auth", authRouter);
+
+app.use("/admin/products", adminProductRoutes);
 
 // Routes for users
 app.get("/home", async (req, res) => {
