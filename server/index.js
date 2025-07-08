@@ -4,11 +4,16 @@ dotenv.config();
 import express from "express";
 import session from "express-session";
 import connect from "./database/mongodb-connect.js";
-import authRouter from "./routes/users/users.js";
+
 import path from "path";
 import { fileURLToPath } from "url";
-import Product from "./models/products.js";
+
+import authRouter from "./routes/users/users.js";
 import adminProductRoutes from "./routes/admin/products.js";
+import adminUserRoutes from "./routes/admin/admin.js"; 
+import adminUserApiRoutes from "./routes/admin/api/users.js";
+
+import Product from "./models/products.js";
 
 // For __dirname in ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -39,7 +44,10 @@ app.set("views", path.join(__dirname, "views"));
 // Auth Route
 app.use("/auth", authRouter);
 
+// Routes for admin
 app.use("/admin/products", adminProductRoutes);
+app.use("/admin", adminUserRoutes); 
+app.use("/admin/api/users", adminUserApiRoutes);
 
 // Routes for users
 app.get("/home", async (req, res) => {

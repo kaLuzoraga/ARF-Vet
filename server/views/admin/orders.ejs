@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <%- include('partials/head') %>
+  <%- include('../partials/head') %>
   <title>Orders - ARF Vet Shop</title>
-  <link rel="stylesheet" href="/server/css/admin/orders.css">
+  <link rel="stylesheet" href="/css/admin/orders.css">
 </head>
-
 <body>
   <div class="admin-wrapper">
     
     <!-- Sidebar Partial -->
-    <%- include('../partials/adminsidebar') %>
+    <%- include('../partials/adminsidebar', { page }) %>
 
     <!-- Main content -->
     <div class="main-area">
@@ -35,17 +33,17 @@
             <tbody>
               <% currentOrders.forEach(order => { %>
                 <tr>
-                  <td><%= order.id %></td>
-                  <td><%= order.customer %></td>
-                  <td><%= order.total %></td>
+                  <td><%= order._id %></td>
+                  <td><%= order.customerName %></td>
+                  <td>₱<%= order.total.toFixed(2) %></td>
                   <td class="actions">
-                    <form method="POST" action="/admin/orders/<%= order.id %>/accept" style="display:inline;">
+                    <form method="POST" action="/admin/orders/<%= order._id %>/accept" style="display:inline;">
                       <button class="accept" type="submit">Accept</button>
                     </form>
-                    <form method="POST" action="/admin/orders/<%= order.id %>/cancel" style="display:inline;">
+                    <form method="POST" action="/admin/orders/<%= order._id %>/cancel" style="display:inline;">
                       <button class="cancel" type="submit">Cancel</button>
                     </form>
-                    <form method="POST" action="/admin/orders/<%= order.id %>/delete" style="display:inline;">
+                    <form method="POST" action="/admin/orders/<%= order._id %>/delete" style="display:inline;">
                       <button class="delete" type="submit">Delete</button>
                     </form>
                   </td>
@@ -70,10 +68,10 @@
             <tbody>
               <% statusOrders.forEach(order => { %>
                 <tr>
-                  <td><%= order.id %></td>
-                  <td><%= order.customer %></td>
+                  <td><%= order._id %></td>
+                  <td><%= order.customerName %></td>
                   <td>
-                    <form method="POST" action="/admin/orders/<%= order.id %>/update" style="display: flex; gap: 5px;">
+                    <form method="POST" action="/admin/orders/<%= order._id %>/update" style="display: flex; gap: 5px;">
                       <select name="status" class="status-select">
                         <option value="Processing" <%= order.status === "Processing" ? "selected" : "" %>>Processing</option>
                         <option value="Out for Delivery" <%= order.status === "Out for Delivery" ? "selected" : "" %>>Out for Delivery</option>
@@ -84,7 +82,7 @@
                     </form>
                   </td>
                   <td class="actions">
-                    <form method="POST" action="/admin/orders/<%= order.id %>/delete-status">
+                    <form method="POST" action="/admin/orders/<%= order._id %>/delete-status">
                       <button class="delete" type="submit">Delete</button>
                     </form>
                   </td>
@@ -109,10 +107,10 @@
             <tbody>
               <% historyOrders.forEach(order => { %>
                 <tr>
-                  <td><%= order.id %></td>
-                  <td><%= order.customer %></td>
+                  <td><%= order._id %></td>
+                  <td><%= order.customerName %></td>
                   <td><%= order.status %></td>
-                  <td><%= order.date %></td>
+                  <td><%= order.createdAt.toLocaleString() %></td>
                 </tr>
               <% }) %>
             </tbody>

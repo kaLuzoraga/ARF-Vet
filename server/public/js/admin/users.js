@@ -13,109 +13,132 @@ const confirmPasswordInput = document.getElementById("confirmPassword");
 const addressInput = document.getElementById("address");
 const phoneInput = document.getElementById("phone");
 const roleInput = document.getElementById("role");
+const userIdInput = document.getElementById("userId");
 
-// 🔁 Dummy users removed; starts empty
 let users = [];
 
-let editIndex = null;
+async function fetchUsers() {
+  try {
+    const res = await fetch("/admin/api/users");
+    users = await res.json();
+    renderUsers();
+  } catch (err) {
+    console.error("Failed to fetch users:", err);
+  }
+}
 
 function renderUsers() {
   adminTable.innerHTML = "";
   customerTable.innerHTML = "";
 
-  users.forEach((user, index) => {
+  users.forEach(user => {
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${user.name}</td>
+      <td>${user.fullName}</td>
       <td>${user.email}</td>
-      <td>${user.role}</td>
+      <td>${user.userType}</td>
       <td class="actions">
-        <button class="edit">Edit</button>
-        <button class="delete">Delete</button>
+        <button class="edit" data-id="${user._id}">Edit</button>
+        <button class="delete" data-id="${user._id}">Delete</button>
       </td>
     `;
 
     row.querySelector(".edit").onclick = () => {
-      editIndex = index;
       modalTitle.textContent = "Edit User";
-      nameInput.value = user.name;
+      userIdInput.value = user._id;
+      nameInput.value = user.fullName;
       emailInput.value = user.email;
-      passwordInput.value = user.password;
-      confirmPasswordInput.value = user.password;
+      passwordInput.value = "";
+      confirmPasswordInput.value = "";
       addressInput.value = user.address;
       phoneInput.value = user.phone;
-      roleInput.value = user.role;
+      roleInput.value = user.userType;
       modal.style.display = "flex";
     };
 
-    row.querySelector(".delete").onclick = () => {
+    row.querySelector(".delete").onclick = async () => {
       if (confirm("Are you sure you want to delete this user?")) {
-        users.splice(index, 1);
-        renderUsers();
+        try {
+          const res = await fetch(`/admin/api/users/${user._id}`, {
+            method: "DELETE"
+          });
+
+          if (!res.ok) {
+            const data = await res.json();
+            return alert(data.error || "Failed to delete user.");
+          }
+
+          fetchUsers();
+        } catch (err) {
+          console.error("Delete failed:", err);
+          alert("Server error while deleting user.");
+        }
       }
     };
 
-    if (user.role === "Admin") {
-      adminTable.appendChild(row);
-    } else {
-      customerTable.appendChild(row);
-    }
+    (user.userType === "admin" ? adminTable : customerTable).appendChild(row);
   });
 }
 
-userForm.onsubmit = (e) => {
+userForm.onsubmit = async (e) => {
   e.preventDefault();
 
-  const name = nameInput.value.trim();
+  const fullName = nameInput.value.trim();
   const email = emailInput.value.trim();
   const password = passwordInput.value;
   const confirmPassword = confirmPasswordInput.value;
   const address = addressInput.value.trim();
   const phone = phoneInput.value.trim();
-  const role = roleInput.value;
+  const userType = roleInput.value;
+  const userId = userIdInput.value;
 
-  if (!name || !email || !password || !confirmPassword || !address || !phone || !role) {
-    alert("Please fill out all fields.");
-    return;
+  // Validation
+  if (!fullName || !email || !address || !phone || !userType) {
+    return alert("Please fill out all fields.");
   }
 
-  if (!email.includes("@")) {
-    alert("Invalid email address.");
-    return;
+  if (!email.includes("@")) return alert("Invalid email.");
+  if (!/^09\d{9}$/.test(phone)) return alert("Invalid phone number.");
+
+  if (!userId) {
+    // New user requires password
+    if (!password || !confirmPassword) return alert("Please provide password and confirm it.");
+    if (password.length < 6) return alert("Password must be at least 6 characters.");
+    if (password !== confirmPassword) return alert("Passwords do not match.");
+  } else if (password && password !== confirmPassword) {
+    return alert("Passwords do not match.");
   }
 
-  if (password.length < 6) {
-    alert("Password must be at least 6 characters.");
-    return;
+  const userData = { fullName, email, address, phone, userType };
+  if (password) userData.password = password;
+
+  try {
+    const method = userId ? "PUT" : "POST";
+    const url = userId ? `/admin/api/users/${userId}` : "/admin/api/users";
+
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData)
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      return alert(data.error || "Failed to save user.");
+    }
+
+    modal.style.display = "none";
+    userForm.reset();
+    fetchUsers();
+  } catch (err) {
+    console.error("Save failed:", err);
+    alert("Server error while saving user.");
   }
-
-  if (password !== confirmPassword) {
-    alert("Passwords do not match.");
-    return;
-  }
-
-  if (!/^09\d{9}$/.test(phone)) {
-    alert("Phone number must start with 09 and be 11 digits.");
-    return;
-  }
-
-  const userData = { name, email, password, address, phone, role };
-
-  if (editIndex !== null) {
-    users[editIndex] = userData;
-    editIndex = null;
-  } else {
-    users.push(userData);
-  }
-
-  userForm.reset();
-  modal.style.display = "none";
-  renderUsers();
 };
 
 addUserBtn.onclick = () => {
-  editIndex = null;
   modalTitle.textContent = "Add User";
+  userIdInput.value = "";
   userForm.reset();
   modal.style.display = "flex";
 };
@@ -130,4 +153,4 @@ window.onclick = (e) => {
   }
 };
 
-renderUsers();
+fetchUsers();
