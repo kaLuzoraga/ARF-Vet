@@ -29,7 +29,7 @@ document.getElementById("login-form").addEventListener("submit", async function 
         if (userType === "user") {
           window.location.href = "/home"; 
         } else if (userType === "admin") {
-          window.location.href = "/admin/dashboard"; 
+          window.location.href = "/admin/users"; 
         } else {
           window.location.href = "/";
         }

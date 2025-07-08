@@ -26,14 +26,22 @@
 .sidebar nav a.active {
   background-color: #3b4c68;
 }
-   </style>
-   
-    <aside class="sidebar">
-      <h2>ARF Vet Shop</h2>
-      <nav>
-        <a href="inventory.html"><i class="fas fa-box"></i> Inventory</a>
-        <a href="orders.html" class="active"><i class="fas fa-receipt"></i> Orders</a>
-        <a href="users.html"><i class="fas fa-users"></i> Users</a>
-        <a href="#"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
-      </nav>
-    </aside>
+</style>
+
+<aside class="sidebar">
+  <h2>ARF Vet Shop</h2>
+  <nav>
+    <a href="/admin/inventory" class="<%= page === 'inventory' ? 'active' : '' %>">
+      <i class="fas fa-box"></i> Inventory
+    </a>
+    <a href="/admin/orders" class="<%= page === 'orders' ? 'active' : '' %>">
+      <i class="fas fa-receipt"></i> Orders
+    </a>
+    <a href="/admin/users" class="<%= page === 'users' ? 'active' : '' %>">
+      <i class="fas fa-users"></i> Users
+    </a>
+    <a href="/auth/logout">
+      <i class="fas fa-sign-out-alt"></i> Sign Out
+    </a>
+  </nav>
+</aside>

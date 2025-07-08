@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <%- include('partials/head') %>
+  <%- include('../partials/head') %>
   <title>Users - ARF Vet Shop</title>
-  <link rel="stylesheet" href="/server/css/admin/users.css">
+  <link rel="stylesheet" href="/css/admin/users.css">
 </head>
 
 <body>
@@ -27,19 +27,7 @@
               <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
             </thead>
             <tbody id="admin-table">
-              <% users.forEach(user => { if (user.role === 'Admin') { %>
-                <tr>
-                  <td><%= user.name %></td>
-                  <td><%= user.email %></td>
-                  <td><%= user.role %></td>
-                  <td class="actions">
-                    <button class="edit" data-id="<%= user._id %>">Edit</button>
-                    <% if (!user.isMainAdmin) { %>
-                      <button class="delete" data-id="<%= user._id %>">Delete</button>
-                    <% } %>
-                  </td>
-                </tr>
-              <% } }); %>
+              <!-- Populated dynamically by JS -->
             </tbody>
           </table>
         </section>
@@ -52,17 +40,7 @@
               <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
             </thead>
             <tbody id="customer-table">
-              <% users.forEach(user => { if (user.role === 'Customer') { %>
-                <tr>
-                  <td><%= user.name %></td>
-                  <td><%= user.email %></td>
-                  <td><%= user.role %></td>
-                  <td class="actions">
-                    <button class="edit" data-id="<%= user._id %>">Edit</button>
-                    <button class="delete" data-id="<%= user._id %>">Delete</button>
-                  </td>
-                </tr>
-              <% } }); %>
+              <!-- Populated dynamically by JS -->
             </tbody>
           </table>
         </section>
@@ -101,8 +79,8 @@
 
         <label for="role">Role</label>
         <select id="role" required>
-          <option value="Admin">Admin</option>
-          <option value="Customer">Customer</option>
+          <option value="admin">Admin</option>
+          <option value="user">Customer</option>
         </select>
 
         <button type="submit" class="btn-primary" id="saveBtn">Save</button>
@@ -110,6 +88,6 @@
     </div>
   </div>
 
-  <script src="/server/js/admin/users.js"></script>
+  <script src="/js/admin/users.js"></script>
 </body>
 </html>

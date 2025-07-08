@@ -16,7 +16,7 @@ authRouter.get("/registration", (req, res) => {
 
 // Handle user registration
 authRouter.post("/registration", async (req, res) => {
-    console.log("📦 Incoming data:", req.body); // ✅ check received values
+    console.log("= Incoming data:", req.body); // Check received values
     const {
         userType,
         fullName,
