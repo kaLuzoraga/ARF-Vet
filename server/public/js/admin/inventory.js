@@ -1,6 +1,8 @@
 function addItem() {
   document.getElementById('modal-title').textContent = 'Add New Product';
   document.getElementById('item-form').reset();
+  document.getElementById('item-id').value = '';
+  document.getElementById('product-image').required = true;
   openModal();
 }
 
@@ -12,69 +14,87 @@ function closeModal() {
   document.getElementById('item-modal').classList.add('hidden');
 }
 
+// Handle form submission (Add/Edit)
 document.getElementById('item-form').addEventListener('submit', async function (e) {
   e.preventDefault();
 
+  const id = document.getElementById('item-id').value;
   const name = document.getElementById('product-name').value.trim();
   const description = document.getElementById('product-description').value.trim();
   const price = parseFloat(document.getElementById('product-price').value);
   const stock = parseInt(document.getElementById('product-stock').value) || 0;
+  const imageFile = document.getElementById('product-image').files[0];
 
-  // Validate required fields
   if (!name || !description || !price) {
     alert("Please fill in all required fields.");
     return;
   }
 
-  const imageFile = document.getElementById('product-image').files[0];
-  if (!imageFile) {
-    alert("Please select an image.");
-    return;
+  const data = { name, description, price, stock };
+
+  if (imageFile) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      data.image = reader.result;
+      submitForm(id, data);  // ✅ Correct call
+    };
+    reader.readAsDataURL(imageFile);
+  } else {
+    submitForm(id, data);  // ✅ Submit without image
   }
-
-  const reader = new FileReader();
-  reader.onload = async function () {
-    const base64Image = reader.result;
-
-    try {
-      const res = await fetch("/admin/products/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ 
-          name, 
-          description, 
-          price, 
-          image: base64Image,
-          stock 
-        })
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        alert("Product added successfully!");
-        closeModal();
-        loadInventory();
-      } else {
-        alert("Failed to add product: " + (data.message || data.error));
-      }
-    } catch (err) {
-      console.error("Error submitting product:", err);
-      alert("An error occurred while adding the product.");
-    }
-  };
-
-  reader.readAsDataURL(imageFile);
 });
+
+async function submitForm(id, data) {
+  const url = id ? `/admin/products/${id}` : `/admin/products/add`;
+  const method = id ? "PUT" : "POST";
+
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      alert(`Product ${id ? "updated" : "added"} successfully!`);
+      closeModal();
+      loadInventory();
+    } else {
+      alert("Failed: " + (result.message || result.error));
+    }
+  } catch (err) {
+    console.error("Submit error:", err);
+    alert("Something went wrong.");
+  }
+}
+
+async function deleteProduct(id) {
+  if (!confirm("Are you sure you want to delete this product?")) return;
+
+  try {
+    const res = await fetch(`/admin/products/${id}`, {
+      method: "DELETE"
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      alert("Product deleted.");
+      loadInventory();
+    } else {
+      alert("Failed to delete: " + (result.message || result.error));
+    }
+  } catch (err) {
+    console.error("Delete error:", err);
+    alert("Error deleting product.");
+  }
+}
 
 async function loadInventory() {
   try {
     const res = await fetch("/admin/products/all");
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
     const products = await res.json();
     const wrapper = document.getElementById("inventory-list");
     wrapper.innerHTML = "";
@@ -93,7 +113,27 @@ async function loadInventory() {
         <p>${item.description}</p>
         <div class="price">₱${item.price.toFixed(2)}</div>
         <div class="stock">Stock: ${item.stock || 0}</div>
+        <div class="buttons">
+          <button class="edit-btn">Edit</button>
+          <button class="delete-btn">Delete</button>
+        </div>
       `;
+
+      card.querySelector(".edit-btn").addEventListener("click", () => {
+        document.getElementById("modal-title").textContent = "Edit Product";
+        document.getElementById("item-id").value = item._id;
+        document.getElementById("product-name").value = item.name;
+        document.getElementById("product-description").value = item.description;
+        document.getElementById("product-price").value = item.price;
+        document.getElementById("product-stock").value = item.stock || 0;
+        document.getElementById("product-image").required = false;
+        openModal();
+      });
+
+      card.querySelector(".delete-btn").addEventListener("click", () => {
+        deleteProduct(item._id);
+      });
+
       wrapper.appendChild(card);
     });
   } catch (err) {
@@ -103,5 +143,4 @@ async function loadInventory() {
   }
 }
 
-// Load inventory when page loads
 loadInventory();
