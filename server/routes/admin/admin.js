@@ -1,6 +1,7 @@
 import express from "express";
-import User from "../../models/users.js"; 
+import User from "../../models/users.js";
 import Order from "../../models/orders.js";
+import Product from "../../models/products.js";
 import bcrypt from "bcrypt";
 
 const router = express.Router();
@@ -17,8 +18,8 @@ router.get("/orders", async (req, res) => {
     res.render("admin/orders", {
       page: "orders",
       currentOrders: [],
-      statusOrders: [],     
-      historyOrders: []  
+      statusOrders: [],
+      historyOrders: []
     });
   } catch (err) {
     console.error("Failed to load orders:", err);
@@ -29,8 +30,8 @@ router.get("/orders", async (req, res) => {
 // Users Page
 router.get("/users", async (req, res) => {
   try {
-    const users = await User.find(); 
-    res.render("admin/users", { page: "users", users }); 
+    const users = await User.find();
+    res.render("admin/users", { page: "users", users });
   } catch (err) {
     console.error("Error fetching users:", err.message);
     res.status(500).send("Server error loading users.");
@@ -91,42 +92,54 @@ router.delete("/users/:id", async (req, res) => {
   }
 });
 
-// GET: Fetch all products
-router.get("/products", async (req, res) => {
+// GET: Fetch all products 
+router.get("/products/all", async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().sort({ createdAt: -1 });
     res.json(products);
-  } catch {
+  } catch (err) {
+    console.error("Error fetching products:", err);
     res.status(500).json({ error: "Failed to load products." });
   }
 });
 
-// POST: Add new product
-router.post("/products", async (req, res) => {
+// POST: Add new product 
+router.post("/products/add", async (req, res) => {
   try {
-    const { name, description, price } = req.body;
-    const image = req.file?.filename || "";
+    const { name, description, price, image, stock } = req.body;
 
-    const product = new Product({ name, description, price, image });
+    if (!name || !description || !price) {
+      return res.status(400).json({ message: "Name, description, and price are required." });
+    }
+
+    const product = new Product({
+      name,
+      description,
+      price,
+      image,
+      stock: stock || 0 // Default to 0 if not provided
+    });
+
     await product.save();
-    res.status(201).json({ message: "Product added." });
-  } catch {
-    res.status(500).json({ error: "Failed to add product." });
+    res.status(201).json({ message: "Product added successfully.", product });
+  } catch (err) {
+    console.error("Error adding product:", err);
+    res.status(500).json({ error: err.message || "Failed to add product." });
   }
 });
 
 // PUT: Update product
 router.put("/products/:id", async (req, res) => {
   try {
-    const { name, description, price } = req.body;
+    const { name, description, price, stock } = req.body;
     const image = req.file?.filename;
 
-    const update = { name, description, price };
+    const update = { name, description, price, stock };
     if (image) update.image = image;
 
     await Product.findByIdAndUpdate(req.params.id, update);
     res.json({ message: "Product updated." });
-  } catch {
+  } catch (err) {
     res.status(500).json({ error: "Failed to update product." });
   }
 });
@@ -136,7 +149,7 @@ router.delete("/products/:id", async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
     res.json({ message: "Product deleted." });
-  } catch {
+  } catch (err) {
     res.status(500).json({ error: "Failed to delete product." });
   }
 });

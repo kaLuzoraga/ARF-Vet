@@ -2,42 +2,46 @@
 <html lang="en">
 
 <head>
-  <%- include('partials/head') %>
-  <title>Item - ARF Vet Shop</title>
-  <link rel="stylesheet" href="/server/css/users/item.css">
+  <%- include('../partials/head') %>
+    <title>Item - ARF Vet Shop</title>
+    <link rel="stylesheet" href="/css/users/item.css">
 </head>
 
 <body>
-  <%- include('partials/navbar') %>
+  <%- include('../partials/navbar') %>
 
-  <main>
-    <div class="product-container">
-      <div class="product-image">
-        <img src="<%= product.image %>" alt="<%= product.name %>">
-      </div>
-      <div class="product-details">
-        <h2><%= product.name %></h2>
-        <p><%= product.description %></p>
-
-        <% if (product.price) { %>
-          <p><strong>₱<%= product.price.toFixed(2) %></strong></p>
-        <% } %>
-
-        <div class="quantity-selector">
-          <button onclick="changeQuantity(-1)">-</button>
-          <input type="number" id="quantity" value="1" min="1">
-          <button onclick="changeQuantity(1)">+</button>
+    <main>
+      <div class="product-container">
+        <div class="product-image">
+          <img src="<%= product.image %>" alt="<%= product.name %>">
         </div>
+        <div class="product-details">
+          <h2>
+            <%= product.name %>
+          </h2>
+          <p>
+            <%= product.description %>
+          </p>
 
-        <button class="add-to-cart" onclick="addToCart('<%= product._id %>')">
-          <i class="fas fa-cart-plus"></i> Add to Cart
-        </button>
+          <% if (product.price) { %>
+            <p><strong>₱<%= product.price.toFixed(2) %></strong></p>
+            <% } %>
+
+              <div class="quantity-selector">
+                <button onclick="changeQuantity(-1)">-</button>
+                <input type="number" id="quantity" value="1" min="1">
+                <button onclick="changeQuantity(1)">+</button>
+              </div>
+
+              <button class="add-to-cart" onclick="addToCart('<%= product._id %>')">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <%- include('partials/footer') %>
-  <script src="/server/js/item.js"></script>
+    <%- include('../partials/footer') %>
+      <script src="/js/users/item.js"></script>
 </body>
 
 </html>
