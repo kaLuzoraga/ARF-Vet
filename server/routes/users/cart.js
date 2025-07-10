@@ -1,13 +1,15 @@
 import express from "express";
 import Cart from "../../models/cart.js";
 import Product from "../../models/products.js";
-import User from "../../models/users.js"; //
+import User from "../../models/users.js"; 
 import Order from "../../models/orders.js";
+import redirectIfNotLoggedIn from "../../middlewares/redirectIfNotLoggedIn.js";
+import checkCartStock from "../../middlewares/checkCartStock.js";
 
 const router = express.Router();
 
 // ADD TO CART 
-router.post("/cart/add", async (req, res) => {
+router.post("/cart/add", redirectIfNotLoggedIn, checkCartStock, async (req, res) => {
   const userId = req.session?.user?.id;
   if (!userId) return res.status(401).json({ message: "Unauthorized" });
 
@@ -40,7 +42,7 @@ router.post("/cart/add", async (req, res) => {
 });
 
 // VIEW CART
-router.get("/cart", async (req, res) => {
+router.get("/cart", redirectIfNotLoggedIn, async (req, res) => {
   const userId = req.session?.user?.id;
   const cart = await Cart.findOne({ user_id: userId, isCheckedOut: false }).populate("items.productId");
 
@@ -56,7 +58,7 @@ router.get("/cart", async (req, res) => {
 });
 
 // REMOVE FROM CART
-router.post("/cart/remove", async (req, res) => {
+router.post("/cart/remove", redirectIfNotLoggedIn, async (req, res) => {
   const userId = req.session?.user?.id;
   const { productId } = req.body;
 
@@ -69,7 +71,7 @@ router.post("/cart/remove", async (req, res) => {
 });
 
 // GET CHECKOUT PAGE
-router.get("/checkout", async (req, res) => {
+router.get("/checkout", redirectIfNotLoggedIn, async (req, res) => {
   if (!req.session.user) {
     console.log("User not logged in.");
     return res.redirect("/auth/login");
@@ -107,7 +109,7 @@ router.get("/checkout", async (req, res) => {
 });
 
 // HANDLE CHECKOUT POST
-router.post("/checkout", async (req, res) => {
+router.post("/checkout", redirectIfNotLoggedIn, async (req, res) => {
   if (!req.session.user) return res.status(401).json({ message: "Unauthorized" });
 
   const userId = req.session.user.id;
@@ -159,7 +161,7 @@ await cart.save();
 });
 
 // Cancel order
-router.post("/orders/:id/cancel", async (req, res) => {
+router.post("/orders/:id/cancel", redirectIfNotLoggedIn, async (req, res) => {
   const orderId = req.params.id;
   const userId = req.session.user.id;
 
@@ -173,7 +175,7 @@ router.post("/orders/:id/cancel", async (req, res) => {
 });
 
 // Reorder
-router.post("/orders/:id/reorder", async (req, res) => {
+router.post("/orders/:id/reorder", redirectIfNotLoggedIn, async (req, res) => {
   const oldOrder = await Order.findById(req.params.id).populate("items.productId");
   const userId = req.session.user.id;
 

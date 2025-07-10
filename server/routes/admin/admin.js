@@ -4,8 +4,10 @@ import Order from "../../models/orders.js";
 import Product from "../../models/products.js";
 import Cart from "../../models/cart.js";
 import bcrypt from "bcrypt";
+import isAdmin from "../../middlewares/isAdmin.js";
 
 const router = express.Router();
+router.use(isAdmin);
 
 // Inventory Page
 router.get("/inventory", (req, res) => {

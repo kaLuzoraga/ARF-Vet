@@ -1,8 +1,10 @@
 import express from "express";
 import User from "../../../models/users.js";
 import bcrypt from "bcrypt";
+import isAdmin from "../../../middlewares/isAdmin.js";
 
 const router = express.Router();
+router.use(isAdmin);
 
 // GET all users (excluding passwords)
 router.get("/", async (req, res) => {

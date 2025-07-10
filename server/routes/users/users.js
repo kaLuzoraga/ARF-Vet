@@ -3,15 +3,17 @@ import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import User from "../../models/users.js";
 import Order from "../../models/orders.js";
+import redirectIfLoggedIn from "../../middlewares/redirectIfLoggedIn.js";
+import redirectIfNotLoggedIn from "../../middlewares/redirectIfNotLoggedIn.js";
 
 const authRouter = express.Router();
 
 // Render login and register pages
-authRouter.get("/login", (req, res) => {
+authRouter.get("/login", redirectIfLoggedIn, (req, res) => {
     res.render("auth/login");
 });
 
-authRouter.get("/registration", (req, res) => {
+authRouter.get("/registration", redirectIfLoggedIn, (req, res) => {
     res.render("auth/registration");
 });
 
@@ -102,7 +104,7 @@ authRouter.post("/login", async (req, res) => {
     }
 });
 
-authRouter.get("/profile", async (req, res) => {
+authRouter.get("/profile", redirectIfNotLoggedIn, async (req, res) => {
   try {
     if (!req.session.user || !req.session.user.id) {
       return res.redirect("/auth/login");
@@ -133,7 +135,7 @@ authRouter.get("/profile", async (req, res) => {
   }
 });
 
-authRouter.post("/profile/update", async (req, res) => {
+authRouter.post("/profile/update", redirectIfNotLoggedIn, async (req, res) => {
   const { fullName, email, address, phone } = req.body;
   try {
     await User.findByIdAndUpdate(req.session.user.id, {
@@ -153,7 +155,7 @@ authRouter.post("/profile/update", async (req, res) => {
   }
 });
 
-authRouter.post("/profile/password", async (req, res) => {
+authRouter.post("/profile/password", redirectIfNotLoggedIn, async (req, res) => {
   const userId = req.session.user.id;
   const { currentPassword, newPassword, confirmPassword } = req.body;
 
@@ -179,7 +181,7 @@ authRouter.post("/profile/password", async (req, res) => {
 });
 
 // Handle user logout
-authRouter.post("/logout", (req, res) => {
+authRouter.post("/logout", redirectIfNotLoggedIn, (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       console.error("Logout error:", err);
