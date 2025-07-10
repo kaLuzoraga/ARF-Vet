@@ -2,6 +2,7 @@ import express from "express";
 import User from "../../models/users.js";
 import Order from "../../models/orders.js";
 import Product from "../../models/products.js";
+import Cart from "../../models/cart.js";
 import bcrypt from "bcrypt";
 
 const router = express.Router();
@@ -14,16 +15,104 @@ router.get("/inventory", (req, res) => {
 // Orders Page
 router.get("/orders", async (req, res) => {
   try {
-    const currentOrders = await Order.find().populate("items.product");
+    const allOrders = await Order.find().populate("user_id");
+
+    const currentOrders = allOrders.filter(order => order.status === "Pending");
+    const statusOrders = allOrders.filter(order =>
+      ["Processing", "Out for Delivery"].includes(order.status)
+    );
+    const historyOrders = allOrders.filter(order =>
+      ["Completed", "Cancelled"].includes(order.status)
+    );
+
     res.render("admin/orders", {
       page: "orders",
-      currentOrders: [],
-      statusOrders: [],
-      historyOrders: []
+      currentOrders: currentOrders.map(o => ({
+        _id: o._id,
+        customerName: o.user_id.name,
+        total: o.total_price
+      })),
+      statusOrders: statusOrders.map(o => ({
+        _id: o._id,
+        customerName: o.user_id.name,
+        status: o.status
+      })),
+      historyOrders: historyOrders.map(o => ({
+        _id: o._id,
+        customerName: o.user_id.name,
+        status: o.status,
+        createdAt: o.order_date
+      }))
     });
   } catch (err) {
     console.error("Failed to load orders:", err);
-    res.render("admin/orders", { page: "orders", currentOrders: [] });
+    res.render("admin/orders", { page: "orders", currentOrders: [], statusOrders: [], historyOrders: [] });
+  }
+});
+
+router.post("/orders/:id/accept", async (req, res) => {
+  try {
+    await Order.findByIdAndUpdate(req.params.id, {
+      status: "Processing"
+    });
+    res.redirect("/admin/orders");
+  } catch (err) {
+    console.error("Error accepting order:", err);
+    res.status(500).send("Failed to accept order.");
+  }
+});
+
+router.post("/orders/:id/cancel", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (order && order.cart_id) {
+      // Reset the associated cart (make it usable again)
+      await Cart.findByIdAndUpdate(order.cart_id, {
+        isCheckedOut: false
+      });
+    }
+
+    // Mark order as cancelled
+    await Order.findByIdAndUpdate(req.params.id, {
+      status: "Cancelled"
+    });
+
+    res.redirect("/admin/orders");
+  } catch (err) {
+    console.error("Error cancelling order:", err);
+    res.status(500).send("Failed to cancel order.");
+  }
+});
+
+router.post("/orders/:id/update", async (req, res) => {
+  try {
+    const { status } = req.body;
+    await Order.findByIdAndUpdate(req.params.id, { status });
+    res.redirect("/admin/orders");
+  } catch (err) {
+    console.error("Error updating order status:", err);
+    res.status(500).send("Failed to update order status.");
+  }
+});
+
+router.post("/orders/:id/delete", async (req, res) => {
+  try {
+    await Order.findByIdAndDelete(req.params.id);
+    res.redirect("/admin/orders");
+  } catch (err) {
+    console.error("Error deleting order:", err);
+    res.status(500).send("Failed to delete order.");
+  }
+});
+
+router.post("/orders/:id/delete-status", async (req, res) => {
+  try {
+    await Order.findByIdAndDelete(req.params.id);
+    res.redirect("/admin/orders");
+  } catch (err) {
+    console.error("Error deleting order from status view:", err);
+    res.status(500).send("Failed to delete order.");
   }
 });
 

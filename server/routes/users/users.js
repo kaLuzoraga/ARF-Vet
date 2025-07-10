@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import User from "../../models/users.js";
-
+import Order from "../../models/orders.js";
 
 const authRouter = express.Router();
 
@@ -101,6 +101,17 @@ authRouter.post("/login", async (req, res) => {
     }
 });
 
+authRouter.get("/profile", async (req, res) => {
+    const userId = req.session.user.id;
+
+    const user = await User.findById(userId);
+    const orders = await Order.find({ user_id: userId }).sort({ order_date: -1 });
+
+    res.render("users/profile", {
+        user,
+        orders
+    });
+});
 
 // Handle user logout
 authRouter.post("/logout", (req, res) => {
