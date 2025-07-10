@@ -12,7 +12,7 @@
             <div class="hero-text">
                 <h1>Healthy Pets, Happy Life</h1>
                 <p>Shop premium vitamins and medications for your furry friends.</p>
-                <a href="#" class="btn">Shop Now</a>
+                <a href="/products" class="btn">Shop Now</a>
             </div>
         </section>
 
@@ -25,7 +25,7 @@
                     <img src="<%= product.image || '/img/default.jpg' %>" alt="<%= product.name %>">
                     <h3><%= product.name %></h3>
                     <p>₱<%= product.price.toFixed(2) %></p>
-                    <button>View Item</button>
+                    <a href="/products/<%= product._id %>" class="btn view-item-btn">View Item</a>
                 </div>
             <% }) %>
         <% } else { %>

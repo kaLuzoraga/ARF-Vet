@@ -1,3 +1,4 @@
+<!-- Replace entire orders.ejs with this -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,118 +8,90 @@
 </head>
 <body>
   <div class="admin-wrapper">
-    
-    <!-- Sidebar Partial -->
     <%- include('../partials/adminsidebar', { page }) %>
 
-    <!-- Main content -->
     <div class="main-area">
       <main class="main-content">
         <div class="header">
           <h1>Orders Management</h1>
         </div>
 
-        <!-- Current Orders -->
+        <% const renderOrderBlock = (order, showActions) => { %>
+          <div class="order-block">
+            <h3>Order ID: <%= order._id %></h3>
+            <p><strong>Customer:</strong> <%= order.customerName %></p>
+            <p><strong>Email:</strong> <%= order.email %></p>
+            <p><strong>Phone:</strong> <%= order.phone %></p>
+            <p><strong>Address:</strong> <%= order.address %></p>
+            <p><strong>Status:</strong> <%= order.status || "Pending" %></p>
+            <p><strong>Placed on:</strong> <%= order.createdAt.toLocaleString() %></p>
+
+            <div class="order-items">
+              <% if (order.items && order.items.length > 0) { %>
+                <% order.items.forEach(item => { %>
+                  <div class="item">
+                    <img src="<%= item.productId?.image || '/img/default.jpg' %>" alt="Product Image">
+                    <div>
+                      <p><strong><%= item.productId?.name %></strong></p>
+                      <p>Qty: <%= item.quantity %></p>
+                      <p>₱<%= item.total.toFixed(2) %></p>
+                    </div>
+                  </div>
+                <% }) %>
+              <% } else { %>
+                <p>No items found.</p>
+              <% } %>
+            </div>
+
+            <p class="total">Total: ₱<%= order.total.toFixed(2) %></p>
+
+            <% if (showActions) { %>
+              <div class="actions">
+                <% if (order.status === 'Pending') { %>
+                  <form method="POST" action="/admin/orders/<%= order._id %>/accept">
+                    <button class="accept" type="submit">Accept</button>
+                  </form>
+                  <form method="POST" action="/admin/orders/<%= order._id %>/cancel">
+                    <button class="cancel" type="submit">Cancel</button>
+                  </form>
+                  <form method="POST" action="/admin/orders/<%= order._id %>/delete">
+                    <button class="delete" type="submit">Delete</button>
+                  </form>
+                <% } else { %>
+                  <form method="POST" action="/admin/orders/<%= order._id %>/update" style="display: inline-flex; gap: 5px;">
+                    <select name="status" class="status-select">
+                      <option value="Processing" <%= order.status === "Processing" ? "selected" : "" %>>Processing</option>
+                      <option value="Out for Delivery" <%= order.status === "Out for Delivery" ? "selected" : "" %>>Out for Delivery</option>
+                      <option value="Completed" <%= order.status === "Completed" ? "selected" : "" %>>Completed</option>
+                      <option value="Cancelled" <%= order.status === "Cancelled" ? "selected" : "" %>>Cancelled</option>
+                    </select>
+                    <button class="update" type="submit">Update</button>
+                  </form>
+                  <form method="POST" action="/admin/orders/<%= order._id %>/delete-status">
+                    <button class="delete" type="submit">Delete</button>
+                  </form>
+                <% } %>
+              </div>
+            <% } %>
+          </div>
+        <% } %>
+
         <section class="category">
           <h2>Current Orders</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Total</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% currentOrders.forEach(order => { %>
-                <tr>
-                  <td><%= order._id %></td>
-                  <td><%= order.customerName %></td>
-                  <td>₱<%= order.total.toFixed(2) %></td>
-                  <td class="actions">
-                    <form method="POST" action="/admin/orders/<%= order._id %>/accept" style="display:inline;">
-                      <button class="accept" type="submit">Accept</button>
-                    </form>
-                    <form method="POST" action="/admin/orders/<%= order._id %>/cancel" style="display:inline;">
-                      <button class="cancel" type="submit">Cancel</button>
-                    </form>
-                    <form method="POST" action="/admin/orders/<%= order._id %>/delete" style="display:inline;">
-                      <button class="delete" type="submit">Delete</button>
-                    </form>
-                  </td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
+          <% currentOrders.forEach(order => renderOrderBlock(order, true)) %>
         </section>
 
-        <!-- Order Status -->
         <section class="category">
           <h2>Order Status Management</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% statusOrders.forEach(order => { %>
-                <tr>
-                  <td><%= order._id %></td>
-                  <td><%= order.customerName %></td>
-                  <td>
-                    <form method="POST" action="/admin/orders/<%= order._id %>/update" style="display: flex; gap: 5px;">
-                      <select name="status" class="status-select">
-                        <option value="Processing" <%= order.status === "Processing" ? "selected" : "" %>>Processing</option>
-                        <option value="Out for Delivery" <%= order.status === "Out for Delivery" ? "selected" : "" %>>Out for Delivery</option>
-                        <option value="Completed" <%= order.status === "Completed" ? "selected" : "" %>>Completed</option>
-                        <option value="Cancelled" <%= order.status === "Cancelled" ? "selected" : "" %>>Cancelled</option>
-                      </select>
-                      <button class="update" type="submit">Update</button>
-                    </form>
-                  </td>
-                  <td class="actions">
-                    <form method="POST" action="/admin/orders/<%= order._id %>/delete-status">
-                      <button class="delete" type="submit">Delete</button>
-                    </form>
-                  </td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
+          <% statusOrders.forEach(order => renderOrderBlock(order, true)) %>
         </section>
 
-        <!-- Order History -->
         <section class="category">
           <h2>Order History</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% historyOrders.forEach(order => { %>
-                <tr>
-                  <td><%= order._id %></td>
-                  <td><%= order.customerName %></td>
-                  <td><%= order.status %></td>
-                  <td><%= order.createdAt.toLocaleString() %></td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
+          <% historyOrders.forEach(order => renderOrderBlock(order, false)) %>
         </section>
-      </main>
 
-      <!-- Footer Partial -->
+      </main>
       <%- include('../partials/adminfooter') %>
     </div>
   </div>

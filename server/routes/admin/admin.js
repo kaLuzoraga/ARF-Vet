@@ -15,34 +15,35 @@ router.get("/inventory", (req, res) => {
 // Orders Page
 router.get("/orders", async (req, res) => {
   try {
-    const allOrders = await Order.find().populate("user_id");
+    const allOrders = await Order.find()
+      .populate("user_id")
+      .populate("items.productId");
 
-    const currentOrders = allOrders.filter(order => order.status === "Pending");
-    const statusOrders = allOrders.filter(order =>
-      ["Processing", "Out for Delivery"].includes(order.status)
-    );
-    const historyOrders = allOrders.filter(order =>
-      ["Completed", "Cancelled"].includes(order.status)
-    );
+    const formatOrder = (order) => ({
+      _id: order._id,
+      customerName: order.user_id?.name,
+      email: order.user_id?.email,
+      phone: order.user_id?.phone,
+      address: order.user_id?.address,
+      items: order.items.map(i => ({
+        productId: i.productId,
+        quantity: i.quantity,
+        total: i.quantity * (i.productId?.price || 0)
+      })),
+      total: order.total_price,
+      status: order.status,
+      createdAt: order.order_date
+    });
+
+    const currentOrders = allOrders.filter(o => o.status === "Pending").map(formatOrder);
+    const statusOrders = allOrders.filter(o => ["Processing", "Out for Delivery"].includes(o.status)).map(formatOrder);
+    const historyOrders = allOrders.filter(o => ["Completed", "Cancelled"].includes(o.status)).map(formatOrder);
 
     res.render("admin/orders", {
       page: "orders",
-      currentOrders: currentOrders.map(o => ({
-        _id: o._id,
-        customerName: o.user_id.name,
-        total: o.total_price
-      })),
-      statusOrders: statusOrders.map(o => ({
-        _id: o._id,
-        customerName: o.user_id.name,
-        status: o.status
-      })),
-      historyOrders: historyOrders.map(o => ({
-        _id: o._id,
-        customerName: o.user_id.name,
-        status: o.status,
-        createdAt: o.order_date
-      }))
+      currentOrders,
+      statusOrders,
+      historyOrders
     });
   } catch (err) {
     console.error("Failed to load orders:", err);
