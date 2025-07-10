@@ -12,7 +12,7 @@ const orderItemSchema = new Schema({
   },
   totalPrice: {
     type: Number,
-    equired: true
+    required: true
   }
 });
 
@@ -20,6 +20,18 @@ const orderSchema = new Schema({
   user_id: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true
+  },
+  fullName: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  phone: {
+    type: String,
     required: true
   },
   items: [orderItemSchema],

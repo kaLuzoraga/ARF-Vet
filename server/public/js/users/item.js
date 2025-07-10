@@ -12,24 +12,23 @@ async function addToCart(productId) {
   const quantity = parseInt(document.getElementById('quantity').value);
 
   try {
-    const res = await fetch("/cart/add", {
-      method: "POST",
+    const res = await fetch('/cart/add', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ productId, quantity })
     });
 
-    const data = await res.json();
-
     if (res.ok) {
       alert("Item added to cart!");
-      window.location.href = "/cart";
+      window.location.href = "/cart"; 
     } else {
-      alert("Failed to add to cart: " + data.message);
+      const err = await res.json();
+      alert("Failed to add to cart: " + err.message);
     }
   } catch (err) {
-    console.error("Add to cart error:", err);
+    console.error("Add to cart failed:", err);
     alert("Something went wrong.");
   }
 }

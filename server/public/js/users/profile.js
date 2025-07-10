@@ -1,31 +1,26 @@
-const form = document.getElementById("profileForm");
-const inputs = form.querySelectorAll("input");
-const editBtn = document.getElementById("editBtn");
-const saveBtn = document.getElementById("saveBtn");
+document.addEventListener("DOMContentLoaded", () => {
+  const editBtn = document.getElementById("editBtn");
+  const saveBtn = document.getElementById("saveBtn");
+  const form = document.getElementById("profileForm");
 
-editBtn.addEventListener("click", () => {
-  inputs.forEach(input => input.disabled = false);
-  editBtn.style.display = "none";
-  saveBtn.style.display = "inline-block";
-});
+  if (editBtn && saveBtn && form) {
+    editBtn.addEventListener("click", () => {
+      // Enable all input fields inside the form
+      form.querySelectorAll("input").forEach(input => {
+        if (input.name !== "_csrf") input.disabled = false;
+      });
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
-  let valid = true;
-  inputs.forEach(input => {
-    if (!input.value.trim()) {
-      input.style.border = "1px solid red";
-      valid = false;
-    } else {
-      input.style.border = "1px solid #ccc";
-    }
-  });
+      editBtn.style.display = "none";
+      saveBtn.style.display = "inline-block";
+    });
 
-  if (!valid) return;
-
-  inputs.forEach(input => input.disabled = true);
-  editBtn.style.display = "inline-block";
-  saveBtn.style.display = "none";
-
-  alert("Profile updated successfully!");
+    form.addEventListener("submit", (e) => {
+      const confirmed = confirm("Save changes to your profile?");
+      if (!confirmed) {
+        e.preventDefault();
+      }
+    });
+  } else {
+    console.warn("Edit or Save button not found.");
+  }
 });
