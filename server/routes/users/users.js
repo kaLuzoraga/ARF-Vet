@@ -180,12 +180,14 @@ authRouter.post("/profile/password", async (req, res) => {
 
 // Handle user logout
 authRouter.post("/logout", (req, res) => {
-    req.session?.destroy((err) => {
-        if (err) {
-            return res.status(500).json({ message: "Logout failed" });
-        }
-        res.json({ message: "Logout successful" });
-    });
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Logout error:", err);
+      return res.status(500).send("Logout failed");
+    }
+
+    res.redirect("/auth/login"); // Redirect to login for both user and admin
+  });
 });
 
 export default authRouter;
