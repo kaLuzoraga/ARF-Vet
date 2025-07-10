@@ -15,6 +15,7 @@ import cartRoutes from "./routes/users/cart.js";
 
 import Cart from "./models/cart.js";
 import Product from "./models/products.js";
+import User from "./models/users.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -90,13 +91,13 @@ app.get("/products/:id", async (req, res) => {
 
   try {
     const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).send("Product not found");
-    }
+    if (!product) return res.status(404).send("Product not found");
+
+    const user = await User.findById(req.session.user.id); // Fetch full user info
 
     res.render("users/item", {
-      user: req.session.user,
-      product
+      product,
+      user // Pass to EJS
     });
   } catch (err) {
     console.error("Error loading item page:", err.message);
@@ -110,26 +111,6 @@ app.get("/about", (req, res) => {
   }
 
   res.render("users/about", { user: req.session.user });
-});
-
-app.get("/profile", async (req, res) => {
-  if (!req.session.user || req.session.user.userType !== "user") {
-    return res.redirect("/auth/login");
-  }
-
-  try {
-    const orders = [];
-    res.render("users/profile", {
-      user: req.session.user,
-      orders
-    });
-  } catch (err) {
-    console.error("Error loading profile:", err.message);
-    res.status(500).render("users/profile", {
-      user: req.session.user,
-      orders: []
-    });
-  }
 });
 
 app.get("/cart", async (req, res) => {
@@ -238,6 +219,10 @@ app.get("/checkout", async (req, res) => {
     console.error("Checkout error:", err);
     res.status(500).send("Unable to load checkout page");
   }
+});
+
+app.get("/profile", (req, res) => {
+  res.redirect("/auth/profile");
 });
 
 app.get("/", (req, res) => {

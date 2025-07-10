@@ -1,5 +1,6 @@
 import express from "express";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 import User from "../../models/users.js";
 import Order from "../../models/orders.js";
 
@@ -102,15 +103,79 @@ authRouter.post("/login", async (req, res) => {
 });
 
 authRouter.get("/profile", async (req, res) => {
-    const userId = req.session.user.id;
+  try {
+    if (!req.session.user || !req.session.user.id) {
+      return res.redirect("/auth/login");
+    }
+
+    const userId = new mongoose.Types.ObjectId(req.session.user.id);
 
     const user = await User.findById(userId);
-    const orders = await Order.find({ user_id: userId }).sort({ order_date: -1 });
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+
+    const orders = await Order.find({ user_id: userId })
+      .populate("items.productId")
+      .sort({ order_date: -1 });
+
+    console.log("User ID:", userId.toString());
+    console.log("Orders found for user:", orders.length);
 
     res.render("users/profile", {
-        user,
-        orders
+      user,
+      orders
     });
+
+  } catch (error) {
+    console.error("Error loading profile:", error);
+    res.status(500).send("Server error loading profile.");
+  }
+});
+
+authRouter.post("/profile/update", async (req, res) => {
+  const { fullName, email, address, phone } = req.body;
+  try {
+    await User.findByIdAndUpdate(req.session.user.id, {
+      fullName,
+      email,
+      address,
+      phone
+    });
+    req.session.user.fullName = fullName;
+    req.session.user.email = email;
+    req.session.user.address = address;
+    req.session.user.phone = phone;
+    res.redirect("/profile");
+  } catch (err) {
+    console.error("Failed to update profile:", err);
+    res.status(500).send("Failed to update profile");
+  }
+});
+
+authRouter.post("/profile/password", async (req, res) => {
+  const userId = req.session.user.id;
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).send("Passwords do not match");
+  }
+
+  try {
+    const user = await User.findById(userId);
+    const match = await bcrypt.compare(currentPassword, user.password);
+
+    if (!match) return res.status(403).send("Current password is incorrect");
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+    await user.save();
+
+    res.redirect("/profile");
+  } catch (err) {
+    console.error("Password change error:", err);
+    res.status(500).send("Error changing password");
+  }
 });
 
 // Handle user logout

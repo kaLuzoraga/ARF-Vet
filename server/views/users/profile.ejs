@@ -1,42 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <%- include('../partials/head') %>
   <title>My Profile - ARF Vet Shop</title>
   <link rel="stylesheet" href="../css/users/profile.css" />
 </head>
-
 <body>
   <%- include('../partials/navbar') %>
 
   <main>
     <div class="profile-wrapper">
-      <div class="profile-left">
-        <img src="<%= user.profileImage || 'https://via.placeholder.com/150' %>" alt="Profile Picture" class="profile-img" />
-      </div>
       <div class="profile-right">
-        <form id="profileForm">
+        <form id="profileForm" action="/profile/update" method="POST">
           <div class="form-group">
-            <label for="name">Full Name</label>
-            <input type="text" id="name" value="<%= user.name %>" disabled />
+            <label for="fullName">Full Name</label>
+            <input type="text" name="fullName" id="fullName" value="<%= user.fullName %>" disabled required />
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" value="<%= user.email %>" disabled />
+            <input type="email" name="email" id="email" value="<%= user.email %>" disabled required />
           </div>
           <div class="form-group">
             <label for="address">Address</label>
-            <input type="text" id="address" value="<%= user.address %>" disabled />
+            <input type="text" name="address" id="address" value="<%= user.address %>" disabled required />
           </div>
           <div class="form-group">
             <label for="phone">Phone Number</label>
-            <input type="text" id="phone" value="<%= user.phone %>" disabled />
+            <input type="text" name="phone" id="phone" value="<%= user.phone %>" disabled required />
           </div>
           <div class="btn-group">
             <button type="button" class="btn primary" id="editBtn">Edit Profile</button>
             <button type="submit" class="btn success" id="saveBtn" style="display: none;">Save</button>
           </div>
+        </form>
+
+        <form id="passwordForm" action="/profile/password" method="POST">
+          <h3>Change Password</h3>
+          <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input type="password" name="currentPassword" required />
+          </div>
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input type="password" name="newPassword" required minlength="6" />
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input type="password" name="confirmPassword" required minlength="6" />
+          </div>
+          <button type="submit" class="btn danger">Change Password</button>
         </form>
       </div>
     </div>
@@ -48,21 +60,39 @@
       <% } else { %>
         <% orders.forEach(order => { %>
           <div class="order-card">
-            <p><strong>Order #<%= order.orderNumber %></strong></p>
-            <p>Placed: <%= order.date %></p>
+            <p><strong>Order #<%= order._id %></strong></p>
+            <p>Placed: <%= order.order_date.toDateString() %></p>
             <p>Status: 
-              <span class="status <%= order.status.toLowerCase() %>">
+              <span class="status <%= order.status.toLowerCase().replace(/ /g, '-') %>">
                 <%= order.status %>
               </span>
             </p>
+
+            <div class="order-items">
+              <% order.items.forEach(item => { %>
+                <div class="order-item">
+                  <img src="<%= item.productId.image %>" alt="<%= item.productId.name %>" />
+                  <div>
+                    <p><strong><%= item.productId.name %></strong></p>
+                    <p>Qty: <%= item.quantity %></p>
+                    <p>Total: ₱<%= item.totalPrice.toFixed(2) %></p>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+            <p><strong>Order Total:</strong> ₱<%= order.total_price.toFixed(2) %></p>
+
+            <% if (order.status === "Pending") { %>
+              <form action="/orders/<%= order._id %>/cancel" method="POST" onsubmit="return confirmCancel()">
+                <button type="submit" class="btn danger">Cancel</button>
+              </form>
+            <% } %>
           </div>
         <% }); %>
       <% } %>
     </section>
   </main>
 
-  <%- include('../partials/footer') %>
-  <script src="/server/js/profile.js"></script>
+  <script src="/js/users/profile.js"></script>
 </body>
-
 </html>

@@ -3,45 +3,48 @@
 
 <head>
   <%- include('../partials/head') %>
-    <title>Item - ARF Vet Shop</title>
-    <link rel="stylesheet" href="/css/users/item.css">
+  <title>Item - ARF Vet Shop</title>
+  <link rel="stylesheet" href="/css/users/item.css">
 </head>
 
 <body>
   <%- include('../partials/navbar') %>
 
-    <main>
-      <div class="product-container">
-        <div class="product-image">
-          <img src="<%= product.image %>" alt="<%= product.name %>">
-        </div>
-        <div class="product-details">
-          <h2>
-            <%= product.name %>
-          </h2>
-          <p>
-            <%= product.description %>
-          </p>
-
-          <% if (product.price) { %>
-            <p><strong>₱<%= product.price.toFixed(2) %></strong></p>
-            <% } %>
-
-              <div class="quantity-selector">
-                <button onclick="changeQuantity(-1)">-</button>
-                <input type="number" id="quantity" value="1" min="1">
-                <button onclick="changeQuantity(1)">+</button>
-              </div>
-
-              <button class="add-to-cart" onclick="addToCart('<%= product._id %>')">
-                <i class="fas fa-cart-plus"></i> Add to Cart
-              </button>
-        </div>
+  <main>
+    <div class="product-container">
+      <div class="product-image">
+        <img src="<%= product.image %>" alt="<%= product.name %>">
       </div>
-    </main>
 
-    <%- include('../partials/footer') %>
-      <script src="/js/users/item.js"></script>
+      <div class="product-details">
+        <h2><%= product.name %></h2>
+        <p><%= product.description %></p>
+
+        <% if (product.price) { %>
+          <p><strong>₱<%= product.price.toFixed(2) %></strong></p>
+        <% } %>
+
+        <div class="quantity-selector">
+          <button onclick="changeQuantity(-1)">-</button>
+          <input type="number" id="quantity" value="1" min="1">
+          <button onclick="changeQuantity(1)">+</button>
+        </div>
+
+        <button class="add-to-cart" onclick="addToCart('<%= product._id %>')">
+          <i class="fas fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+    </div>
+
+    <% if (!user) { %>
+      <div class="not-logged-in">
+        <p><strong>Please <a href="/auth/login">log in</a> to add to cart or checkout.</strong></p>
+      </div>
+    <% } %>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <script src="/js/users/item.js"></script>
 </body>
 
 </html>
