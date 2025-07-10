@@ -60,8 +60,17 @@ router.post("/cart/add", async (req, res) => {
 router.get("/cart", async (req, res) => {
   const userId = req.session?.user?.id;
   const cart = await Cart.findOne({ user_id: userId }).populate("items.productId");
+
+  const cartItems = cart?.items.map(item => ({
+    _id: item.productId._id,
+    name: item.productId.name,
+    image: item.productId.image,
+    price: item.productId.price,
+    quantity: item.quantity
+  })) || [];
+
   res.render("users/cart", {
-    cartItems: cart?.items || []
+    cartItems
   });
 });
 
@@ -78,29 +87,49 @@ router.post("/cart/remove", async (req, res) => {
 });
 
 router.get("/checkout", async (req, res) => {
-  if (!req.session.user) return res.redirect("/auth/login");
+  if (!req.session.user) {
+    console.log("User not logged in.");
+    return res.redirect("/auth/login");
+  }
 
   const userId = req.session.user.id;
 
-  const cart = await Cart.findOne({ user_id: userId, isCheckedOut: false }).populate("items.productId");
+  try {
+    const cart = await Cart.findOne({ user_id: userId, isCheckedOut: false }).populate("items.productId");
 
-  if (!cart || cart.items.length === 0) {
-    return res.redirect("/cart");
+    if (!cart || cart.items.length === 0) {
+      console.log("Empty cart or no cart found");
+      return res.redirect("/cart");
+    }
+
+    const validItems = cart.items.filter(item => item.productId);
+
+    if (validItems.length === 0) {
+      console.log("Cart has items but all products were deleted.");
+      return res.redirect("/cart");
+    }
+
+    const cartItems = validItems.map(item => ({
+      _id: item.productId._id,
+      name: item.productId.name,
+      image: item.productId.image,
+      price: item.productId.price,
+      quantity: item.quantity
+    }));
+
+    res.render("users/orderinfo", {
+      user: req.session.user,
+      cartItems
+    });
+
+  } catch (err) {
+    console.error("Checkout error:", err);
+    res.status(500).send("Unable to load checkout page");
   }
-
-  const cartItems = cart.items.map(item => ({
-    _id: item.productId._id,
-    name: item.productId.name,
-    image: item.productId.image,
-    price: item.productId.price,
-    quantity: item.quantity
-  }));
-
-  res.render("users/orderinfo", { cartItems });
 });
 
 router.post("/checkout", async (req, res) => {
-  if (!req.session.user) return res.redirect("/auth/login");
+  if (!req.session.user) return res.status(401).json({ message: "Unauthorized" });
 
   const userId = req.session.user.id;
   const { fullName, email, phone, address, paymentMethod } = req.body;
@@ -109,7 +138,7 @@ router.post("/checkout", async (req, res) => {
     const cart = await Cart.findOne({ user_id: userId, isCheckedOut: false }).populate("items.productId");
 
     if (!cart || cart.items.length === 0) {
-      return res.redirect("/cart");
+      return res.status(400).json({ message: "Cart is empty." });
     }
 
     const orderItems = cart.items.map(item => ({
@@ -120,7 +149,7 @@ router.post("/checkout", async (req, res) => {
 
     const totalPrice = orderItems.reduce((sum, item) => sum + item.totalPrice, 0);
 
-    const newOrder = await Order.create({
+    await Order.create({
       user_id: userId,
       items: orderItems,
       total_price: totalPrice,
@@ -130,13 +159,20 @@ router.post("/checkout", async (req, res) => {
       cart_id: cart._id
     });
 
+    const cartItems = cart.items.map(item => ({
+      name: item.productId.name,
+      price: item.productId.price,
+      quantity: item.quantity
+    }));
+
+    cart.items = [];
     cart.isCheckedOut = true;
     await cart.save();
 
-    res.redirect("/orders/thankyou");
+    res.json({ message: "Order placed", cartItems });
   } catch (err) {
-    console.error("Checkout error:", err);
-    res.status(500).send("Something went wrong during checkout.");
+    console.error("Checkout error stack:", err.stack);
+    res.status(500).json({ message: "Checkout failed", error: err.message });
   }
 });
 

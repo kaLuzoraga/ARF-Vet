@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 import authRouter from "./routes/users/users.js";
 import adminUserRoutes from "./routes/admin/admin.js";
 import adminUserApiRoutes from "./routes/admin/api/users.js";
+import cartRoutes from "./routes/users/cart.js";
 
 import Cart from "./models/cart.js";
 import Product from "./models/products.js";
@@ -40,6 +41,7 @@ app.use("/auth", authRouter);
 
 app.use("/admin", adminUserRoutes);
 app.use("/admin/api/users", adminUserApiRoutes);
+app.use('/', cartRoutes);
 
 app.get("/home", async (req, res) => {
   if (!req.session.user || req.session.user.userType !== "user") {

@@ -34,7 +34,7 @@ const orderSchema = new Schema({
   },
   payment_method: {
     type: String,
-    enum: ["Cash", "GCash", "Bank Transfer"],
+    enum: ["Cash on Delivery", "GCash", "Bank Transfer"],
     default: "Cash"
   },
   delivery_address: {

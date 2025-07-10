@@ -2,63 +2,142 @@
 <html lang="en">
 
 <head>
-  <%- include('/..partials/head') %>
-  <title>Order Information - ARF Vet Shop</title>
-  <link rel="stylesheet" href="/server/css/users/orderinfo.css">
+  <%- include('../partials/head') %>
+    <title>Order Information - ARF Vet Shop</title>
+    <link rel="stylesheet" href="/css/users/orderinfo.css">
 </head>
 
 <body>
   <%- include('../partials/navbar') %>
 
-  <main class="checkout-container">
-    <h1>Review Your Order & Checkout</h1>
+    <main class="checkout-container">
+      <h1>Review Your Order & Checkout</h1>
 
-    <section class="order-summary">
-      <h2>Order Summary</h2>
+      <section class="order-summary">
+        <h2>Order Summary</h2>
 
-      <% let total = 0; %>
-      <% cartItems.forEach(item => { %>
-        <% const itemTotal = item.price * item.quantity; total += itemTotal; %>
-        <div class="order-item">
-          <p>
-            <strong><%= item.name %></strong> - ₱<%= item.price.toFixed(2) %> × <%= item.quantity %> = ₱<%= itemTotal.toFixed(2) %>
-          </p>
+        <% let total=0; %>
+          <% cartItems.forEach(item=> { %>
+            <% const itemTotal=item.price * item.quantity; total +=itemTotal; %>
+              <div class="order-item">
+                <p>
+                  <strong>
+                    <%= item.name %>
+                  </strong> - ₱<%= item.price.toFixed(2) %> × <%= item.quantity %> = ₱<%= itemTotal.toFixed(2) %>
+                </p>
+              </div>
+              <% }); %>
+
+                <div class="order-total">
+                  <h3>Total: ₱<%= total.toFixed(2) %>
+                  </h3>
+                </div>
+      </section>
+
+      <section class="checkout-form-section">
+        <h2>Shipping & Payment Details</h2>
+        <form id="checkoutForm" class="checkout-form">
+          <label>Full Name</label>
+          <input type="text" name="fullName" required>
+
+          <label>Email Address</label>
+          <input type="email" name="email" required>
+
+          <label>Phone Number</label>
+          <input type="text" name="phone" required>
+
+          <label>Delivery Address</label>
+          <textarea name="address" rows="4" required></textarea>
+
+          <label>Payment Method</label>
+          <select name="paymentMethod" required>
+            <option>Cash on Delivery</option>
+            <option>GCash</option>
+            <option>Bank Transfer</option>
+          </select>
+
+          <button type="submit">Place Order</button>
+        </form>
+        <div id="invoiceModal" class="modal hidden">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Order Placed Successfully!</h2>
+            <p><strong>Name:</strong> <span id="inv-name"></span></p>
+            <p><strong>Email:</strong> <span id="inv-email"></span></p>
+            <p><strong>Phone:</strong> <span id="inv-phone"></span></p>
+            <p><strong>Address:</strong> <span id="inv-address"></span></p>
+            <p><strong>Payment Method:</strong> <span id="inv-payment"></span></p>
+            <hr>
+            <h3>Order Summary</h3>
+            <div id="inv-items"></div>
+            <h4>Total: ₱<span id="inv-total"></span></h4>
+            <button onclick="window.location.href='/products'">Continue Shopping</button>
+          </div>
         </div>
-      <% }); %>
+      </section>
+    </main>
 
-      <div class="order-total">
-        <h3>Total: ₱<%= total.toFixed(2) %></h3>
-      </div>
-    </section>
+    <%- include('../partials/footer') %>
+      <script>
+        document.getElementById("checkoutForm").addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-    <section class="checkout-form-section">
-      <h2>Shipping & Payment Details</h2>
-      <form class="checkout-form" method="POST" action="/checkout">
-        <label>Full Name</label>
-        <input type="text" name="fullName" required>
+          const form = e.target;
+          const data = {
+            fullName: form.fullName.value,
+            email: form.email.value,
+            phone: form.phone.value,
+            address: form.address.value,
+            paymentMethod: form.paymentMethod.value
+          };
 
-        <label>Email Address</label>
-        <input type="email" name="email" required>
+          try {
+            const res = await fetch("/checkout", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(data)
+            });
 
-        <label>Phone Number</label>
-        <input type="text" name="phone" required>
+            if (res.ok) {
+              const result = await res.json();
 
-        <label>Delivery Address</label>
-        <textarea name="address" rows="4" required></textarea>
+              // Fill modal with invoice details
+              document.getElementById("inv-name").textContent = data.fullName;
+              document.getElementById("inv-email").textContent = data.email;
+              document.getElementById("inv-phone").textContent = data.phone;
+              document.getElementById("inv-address").textContent = data.address;
+              document.getElementById("inv-payment").textContent = data.paymentMethod;
 
-        <label>Payment Method</label>
-        <select name="paymentMethod" required>
-          <option>Cash on Delivery</option>
-          <option>GCash</option>
-          <option>Bank Transfer</option>
-        </select>
+              let itemsHtml = "";
+              let total = 0;
+              result.cartItems.forEach(item => {
+                const line = `₱${item.price.toFixed(2)} × ${item.quantity} = ₱${(item.price * item.quantity).toFixed(2)}<br>`;
+                itemsHtml += `<p><strong>${item.name}</strong>: ${line}</p>`;
+                total += item.price * item.quantity;
+              });
 
-        <button type="submit">Place Order</button>
-      </form>
-    </section>
-  </main>
+              document.getElementById("inv-items").innerHTML = itemsHtml;
+              document.getElementById("inv-total").textContent = total.toFixed(2);
 
-  <%- include('../partials/footer') %>
+              // Show modal
+              document.getElementById("invoiceModal").classList.remove("hidden");
+            } else {
+              const err = await res.text();
+              alert("Checkout failed: " + err);
+            }
+          } catch (err) {
+            alert("Something went wrong. Please try again.");
+            console.error(err);
+          }
+        });
+
+        // Close modal
+        document.querySelector(".close").onclick = () => {
+          document.getElementById("invoiceModal").classList.add("hidden");
+        };
+      </script>
 </body>
 
 </html>
