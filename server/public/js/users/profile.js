@@ -5,9 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (editBtn && saveBtn && form) {
     editBtn.addEventListener("click", () => {
-      // Enable all input fields inside the form
       form.querySelectorAll("input").forEach(input => {
-        if (input.name !== "_csrf") input.disabled = false;
+        input.removeAttribute("disabled");
       });
 
       editBtn.style.display = "none";
@@ -15,6 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     form.addEventListener("submit", (e) => {
+      form.querySelectorAll("input").forEach(input => {
+        input.removeAttribute("disabled");
+      });
+
       const confirmed = confirm("Save changes to your profile?");
       if (!confirmed) {
         e.preventDefault();
