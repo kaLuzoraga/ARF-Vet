@@ -70,16 +70,37 @@ app.get("/products", async (req, res) => {
   }
 
   try {
-    const products = await Product.find();
+    const searchQuery = req.query.search || '';
+    const categoryQuery = req.query.category || '';
+    let filter = {};
+
+    // Build filter object
+    if (searchQuery) {
+      filter.$or = [
+        { name: { $regex: searchQuery, $options: 'i' } },
+        { description: { $regex: searchQuery, $options: 'i' } }
+      ];
+    }
+
+    if (categoryQuery) {
+      filter.category = categoryQuery;
+    }
+
+    const products = await Product.find(filter);
+
     res.render("users/products", {
       user: req.session.user,
-      products: products || []
+      products: products || [],
+      searchQuery: searchQuery,
+      categoryQuery: categoryQuery
     });
   } catch (err) {
     console.error("Error loading products page:", err.message);
     res.render("users/products", {
       user: req.session.user,
-      products: []
+      products: [],
+      searchQuery: '',
+      categoryQuery: ''
     });
   }
 });

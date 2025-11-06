@@ -22,15 +22,16 @@ document.getElementById('item-form').addEventListener('submit', async function (
   const name = document.getElementById('product-name').value.trim();
   const description = document.getElementById('product-description').value.trim();
   const price = parseFloat(document.getElementById('product-price').value);
+  const category = document.getElementById('product-category').value;
   const stock = parseInt(document.getElementById('product-stock').value) || 0;
   const imageFile = document.getElementById('product-image').files[0];
 
-  if (!name || !description || !price) {
+  if (!name || !description || !price || !category) {
     alert("Please fill in all required fields.");
     return;
   }
 
-  const data = { name, description, price, stock };
+  const data = { name, description, price, category, stock };
 
   if (imageFile) {
     const reader = new FileReader();
@@ -125,6 +126,7 @@ async function loadInventory() {
         document.getElementById("product-name").value = item.name;
         document.getElementById("product-description").value = item.description;
         document.getElementById("product-price").value = item.price;
+        document.getElementById("product-category").value = item.category || "Other";
         document.getElementById("product-stock").value = item.stock || 0;
         document.getElementById("product-image").required = false;
         openModal();

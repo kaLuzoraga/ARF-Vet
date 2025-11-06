@@ -13,7 +13,14 @@
   <main>
     <div class="product-container">
       <div class="product-image">
-        <img src="<%= product.image %>" alt="<%= product.name %>">
+        <div class="product-image-wrapper">
+          <img src="<%= product.image %>" alt="<%= product.name %>">
+          <% if (product.stock === 0) { %>
+            <div class="out-of-stock-overlay">
+              <span>OUT OF STOCK</span>
+            </div>
+          <% } %>
+        </div>
       </div>
 
       <div class="product-details">
@@ -24,15 +31,23 @@
           <p><strong>₱<%= product.price.toFixed(2) %></strong></p>
         <% } %>
 
-        <div class="quantity-selector">
-          <button onclick="changeQuantity(-1)">-</button>
-          <input type="number" id="quantity" value="1" min="1">
-          <button onclick="changeQuantity(1)">+</button>
-        </div>
+        <p><strong>Stock:</strong> <%= product.stock %></p>
 
-        <button class="add-to-cart" onclick="addToCart('<%= product._id %>')">
-          <i class="fas fa-cart-plus"></i> Add to Cart
-        </button>
+        <% if (product.stock > 0) { %>
+          <div class="quantity-selector">
+            <button onclick="changeQuantity(-1)">-</button>
+            <input type="number" id="quantity" value="1" min="1" max="<%= product.stock %>">
+            <button onclick="changeQuantity(1)">+</button>
+          </div>
+
+          <button class="add-to-cart" onclick="addToCart('<%= product._id %>')">
+            <i class="fas fa-cart-plus"></i> Add to Cart
+          </button>
+        <% } else { %>
+          <button class="add-to-cart" disabled style="background-color: #ccc; cursor: not-allowed;">
+            <i class="fas fa-ban"></i> Out of Stock
+          </button>
+        <% } %>
       </div>
     </div>
 

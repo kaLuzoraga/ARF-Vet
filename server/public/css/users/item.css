@@ -75,9 +75,38 @@ main {
   flex: 1;
 }
 
+.product-image-wrapper {
+  position: relative;
+  width: 100%;
+}
+
 .product-image img {
   width: 100%;
   border-radius: 8px;
+}
+
+.out-of-stock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.out-of-stock-overlay span {
+  color: #fff;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
+  padding: 15px 25px;
+  background-color: rgba(220, 53, 69, 0.9);
+  border-radius: 5px;
+  letter-spacing: 1px;
 }
 
 .product-details {

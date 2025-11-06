@@ -122,6 +122,19 @@ router.post("/checkout", redirectIfNotLoggedIn, async (req, res) => {
       return res.status(400).json({ message: "Cart is empty." });
     }
 
+    // Check stock availability before processing
+    for (const item of cart.items) {
+      const product = await Product.findById(item.productId._id);
+      if (!product) {
+        return res.status(400).json({ message: `Product ${item.productId.name} not found.` });
+      }
+      if (product.stock < item.quantity) {
+        return res.status(400).json({ 
+          message: `Insufficient stock for ${product.name}. Only ${product.stock} available.` 
+        });
+      }
+    }
+
     const orderItems = cart.items.map(item => ({
       productId: item.productId._id,
       quantity: item.quantity,
@@ -129,6 +142,14 @@ router.post("/checkout", redirectIfNotLoggedIn, async (req, res) => {
     }));
 
     const totalPrice = orderItems.reduce((sum, item) => sum + item.totalPrice, 0);
+
+    // Deduct stock from products
+    for (const item of cart.items) {
+      await Product.findByIdAndUpdate(
+        item.productId._id,
+        { $inc: { stock: -item.quantity } }
+      );
+    }
 
     await Order.create({
       user_id: userId,
@@ -143,16 +164,15 @@ router.post("/checkout", redirectIfNotLoggedIn, async (req, res) => {
       cart_id: cart._id
     });
 
-const cartItems = cart.items.map(item => ({
-  name: item.productId.name,
-  price: item.productId.price,
-  quantity: item.quantity
-}));
+    const cartItems = cart.items.map(item => ({
+      name: item.productId.name,
+      price: item.productId.price,
+      quantity: item.quantity
+    }));
 
-
-cart.items = [];
-cart.isCheckedOut = true;
-await cart.save();
+    cart.items = [];
+    cart.isCheckedOut = true;
+    await cart.save();
     res.json({ message: "Order placed", cartItems });
   } catch (err) {
     console.error("Checkout error stack:", err.stack);
@@ -166,6 +186,23 @@ router.post("/orders/:id/cancel", redirectIfNotLoggedIn, async (req, res) => {
   const userId = req.session.user.id;
 
   try {
+    const order = await Order.findOne({ _id: orderId, user_id: userId });
+    
+    if (!order) {
+      return res.status(404).send("Order not found");
+    }
+
+    // Only restore stock if order is being cancelled from a non-cancelled status
+    if (order.status !== "Cancelled") {
+      // Restore stock for cancelled orders
+      for (const item of order.items) {
+        await Product.findByIdAndUpdate(
+          item.productId,
+          { $inc: { stock: item.quantity } }
+        );
+      }
+    }
+
     await Order.updateOne({ _id: orderId, user_id: userId }, { status: "Cancelled" });
     res.redirect("/profile");
   } catch (err) {

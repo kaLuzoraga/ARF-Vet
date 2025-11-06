@@ -69,7 +69,22 @@ router.post("/orders/:id/cancel", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
 
-    if (order && order.cart_id) {
+    if (!order) {
+      return res.status(404).send("Order not found");
+    }
+
+    // Only restore stock if order is being cancelled from a non-cancelled status
+    if (order.status !== "Cancelled") {
+      // Restore stock for cancelled orders
+      for (const item of order.items) {
+        await Product.findByIdAndUpdate(
+          item.productId,
+          { $inc: { stock: item.quantity } }
+        );
+      }
+    }
+
+    if (order.cart_id) {
       // Reset the associated cart (make it usable again)
       await Cart.findByIdAndUpdate(order.cart_id, {
         isCheckedOut: false

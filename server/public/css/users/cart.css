@@ -111,17 +111,39 @@ main h1 {
     color: #273044;
 }
 
+.checkout-btn,
 .browse-btn {
     background-color: #93e9be;
     color: #273044;
-    text-decoration: none;
-    padding: 12px 24px;
+    border: none;
+    padding: 14px 28px;
     font-weight: bold;
-    border-radius: 5px;
+    font-size: 1.1em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.checkout-btn:hover,
 .browse-btn:hover {
     background-color: #6cd8a8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.checkout-btn:active,
+.browse-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-btn i,
+.browse-btn i {
+    font-size: 1.2em;
 }
 
 /* Footer */

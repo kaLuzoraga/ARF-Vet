@@ -16,6 +16,12 @@ const productSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  category: {
+    type: String,
+    required: true,
+    enum: ['Vitamins & Supplements', 'Medications', 'Nutrition', 'Wellness', 'Other'],
+    default: 'Other'
+  },
   image: {
     type: String,
     required: false

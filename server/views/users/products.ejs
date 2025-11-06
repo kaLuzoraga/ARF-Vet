@@ -19,6 +19,45 @@
       </div>
     </section>
 
+    <!-- Search and Filter Section -->
+    <section class="search-section">
+      <div class="search-container">
+        <form action="/products" method="GET" class="search-form">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input 
+              type="text" 
+              name="search" 
+              placeholder="Search products by name or description..." 
+              value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+              class="search-input"
+            />
+            <select name="category" class="category-filter">
+              <option value="">All Categories</option>
+              <option value="Vitamins & Supplements" <%= typeof categoryQuery !== 'undefined' && categoryQuery === 'Vitamins & Supplements' ? 'selected' : '' %>>Vitamins & Supplements</option>
+              <option value="Medications" <%= typeof categoryQuery !== 'undefined' && categoryQuery === 'Medications' ? 'selected' : '' %>>Medications</option>
+              <option value="Nutrition" <%= typeof categoryQuery !== 'undefined' && categoryQuery === 'Nutrition' ? 'selected' : '' %>>Nutrition</option>
+              <option value="Wellness" <%= typeof categoryQuery !== 'undefined' && categoryQuery === 'Wellness' ? 'selected' : '' %>>Wellness</option>
+              <option value="Other" <%= typeof categoryQuery !== 'undefined' && categoryQuery === 'Other' ? 'selected' : '' %>>Other</option>
+            </select>
+            <button type="submit" class="search-btn">Search</button>
+            <% if ((typeof searchQuery !== 'undefined' && searchQuery) || (typeof categoryQuery !== 'undefined' && categoryQuery)) { %>
+              <a href="/products" class="clear-btn">
+                <i class="fas fa-times"></i> Clear
+              </a>
+            <% } %>
+          </div>
+        </form>
+        <% if ((typeof searchQuery !== 'undefined' && searchQuery) || (typeof categoryQuery !== 'undefined' && categoryQuery)) { %>
+          <p class="search-results">
+            Found <%= products.length %> result<%= products.length !== 1 ? 's' : '' %>
+            <% if (searchQuery) { %> for "<%= searchQuery %>"<% } %>
+            <% if (categoryQuery) { %> in <%= categoryQuery %><% } %>
+          </p>
+        <% } %>
+      </div>
+    </section>
+
     <!-- Product Grid -->
     <section class="products">
       <h2>All Products</h2>
@@ -27,7 +66,14 @@
           <% products.forEach(product=> { %>
             <a href="/products/<%= product._id %>" class="product-card-link">
               <div class="product-card">
-                <img src="<%= product.image || '/img/default.jpg' %>" alt="<%= product.name %>">
+                <div class="product-image-wrapper">
+                  <img src="<%= product.image || '/img/default.jpg' %>" alt="<%= product.name %>">
+                  <% if (product.stock === 0) { %>
+                    <div class="out-of-stock-overlay">
+                      <span>OUT OF STOCK</span>
+                    </div>
+                  <% } %>
+                </div>
                 <h3>
                   <%= product.name %>
                 </h3>
@@ -44,7 +90,13 @@
             </a>
             <% }) %>
               <% } else { %>
-                <p style="text-align:center;">No products available yet.</p>
+                <p style="text-align:center;">
+                  <% if (typeof searchQuery !== 'undefined' && searchQuery) { %>
+                    No products found matching "<%= searchQuery %>". <a href="/products" style="color: #93e9be;">View all products</a>
+                  <% } else { %>
+                    No products available yet.
+                  <% } %>
+                </p>
                 <% } %>
       </div>
     </section>
