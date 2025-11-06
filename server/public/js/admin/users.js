@@ -33,7 +33,12 @@ function renderUsers() {
 
   users.forEach(user => {
     const row = document.createElement("tr");
+    const profilePic = user.profilePicture || "/assets/default-avatar.svg";
+    
     row.innerHTML = `
+      <td>
+        <img src="${profilePic}" alt="${user.fullName}" class="user-avatar" />
+      </td>
       <td>${user.fullName}</td>
       <td>${user.email}</td>
       <td>${user.userType}</td>

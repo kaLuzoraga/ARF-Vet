@@ -1,12 +1,41 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
+import multer from "multer";
+import path from "path";
 import User from "../../models/users.js";
 import Order from "../../models/orders.js";
 import redirectIfLoggedIn from "../../middlewares/redirectIfLoggedIn.js";
 import redirectIfNotLoggedIn from "../../middlewares/redirectIfNotLoggedIn.js";
 
 const authRouter = express.Router();
+
+// Configure multer for profile picture uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/uploads/profiles/");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "profile-" + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: function (req, file, cb) {
+    const allowedTypes = /jpeg|jpg|png|gif/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error("Only image files (jpeg, jpg, png, gif) are allowed!"));
+    }
+  }
+});
 
 // Render login and register pages
 authRouter.get("/login", redirectIfLoggedIn, (req, res) => {
@@ -152,6 +181,29 @@ authRouter.post("/profile/update", redirectIfNotLoggedIn, async (req, res) => {
   } catch (err) {
     console.error("Failed to update profile:", err);
     res.status(500).send("Failed to update profile");
+  }
+});
+
+// Handle profile picture upload
+authRouter.post("/profile/picture", redirectIfNotLoggedIn, upload.single("profilePicture"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const profilePicturePath = "/uploads/profiles/" + req.file.filename;
+    
+    await User.findByIdAndUpdate(req.session.user.id, {
+      profilePicture: profilePicturePath
+    });
+
+    res.status(200).json({ 
+      message: "Profile picture updated successfully",
+      profilePicture: profilePicturePath
+    });
+  } catch (err) {
+    console.error("Failed to upload profile picture:", err);
+    res.status(500).json({ message: "Failed to upload profile picture" });
   }
 });
 

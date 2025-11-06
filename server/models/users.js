@@ -34,6 +34,10 @@ const userSchema = new Schema({
         required: true,
         match: [/^09\d{9}$/, "Phone number must start with 09 and be 11 digits"],
     },
+    profilePicture: {
+        type: String,
+        default: "/assets/default-avatar.svg",
+    },
 });
 
 const User = model("User", userSchema);

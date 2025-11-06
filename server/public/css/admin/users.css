@@ -104,6 +104,18 @@ th {
   color: white;
 }
 
+/* User Avatar Styling */
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #93e9be;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .actions button {
   padding: 6px 10px;
   margin-right: 5px;
