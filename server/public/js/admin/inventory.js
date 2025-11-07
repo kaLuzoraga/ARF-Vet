@@ -37,11 +37,11 @@ document.getElementById('item-form').addEventListener('submit', async function (
     const reader = new FileReader();
     reader.onload = function () {
       data.image = reader.result;
-      submitForm(id, data);  // ✅ Correct call
+      submitForm(id, data);
     };
     reader.readAsDataURL(imageFile);
   } else {
-    submitForm(id, data);  // ✅ Submit without image
+    submitForm(id, data);
   }
 });
 

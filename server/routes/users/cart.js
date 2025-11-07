@@ -80,7 +80,7 @@ router.get("/checkout", redirectIfNotLoggedIn, async (req, res) => {
   const userId = req.session.user.id;
 
   try {
-    const user = await User.findById(userId); // Fetch full user info
+    const user = await User.findById(userId);
     const cart = await Cart.findOne({ user_id: userId, isCheckedOut: false }).populate("items.productId");
 
     if (!cart || cart.items.length === 0) {

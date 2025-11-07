@@ -48,7 +48,7 @@ authRouter.get("/registration", redirectIfLoggedIn, (req, res) => {
 
 // Handle user registration
 authRouter.post("/registration", async (req, res) => {
-    console.log("= Incoming data:", req.body); // Check received values
+    console.log("= Incoming data:", req.body);
     const {
         userType,
         fullName,
@@ -114,7 +114,7 @@ authRouter.post("/login", async (req, res) => {
             userType: user.userType
         };
 
-        console.log("User session after login:", req.session.user); // Debugging line to check session data
+        console.log("User session after login:", req.session.user);
 
         // Store back to frontend
         res.status(200).json({
@@ -240,7 +240,7 @@ authRouter.post("/logout", redirectIfNotLoggedIn, (req, res) => {
       return res.status(500).send("Logout failed");
     }
 
-    res.redirect("/auth/login"); // Redirect to login for both user and admin
+    res.redirect("/auth/login");
   });
 });
 

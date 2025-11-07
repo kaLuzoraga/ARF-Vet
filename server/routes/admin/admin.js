@@ -224,7 +224,7 @@ router.post("/products/add", async (req, res) => {
       description,
       price,
       image,
-      stock: stock || 0 // Default to 0 if not provided
+      stock: stock || 0 
     });
 
     await product.save();
